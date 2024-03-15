@@ -5,6 +5,9 @@ import app from "../firebase"
 import { useState } from "react"
 import { GOOGLE_ICON_IMG, USER_DEFAULT_IMG } from "../helpers/icons"
 import { settingUpLocalStorage } from "../helpers/helperfunc"
+import axios from "axios"
+import { ADD_NEW_USER } from "../helpers/backendapi"
+import { config } from "../helpers/config"
 const auth = getAuth(app)
 const provider = new GoogleAuthProvider(app)
 const LoginForm = () => {
@@ -14,9 +17,10 @@ const LoginForm = () => {
     const loginUser = async (e) => {
         e.preventDefault()
         await signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
+            .then(async(userCredential) => {
                 let displayName = userCredential.user.email.substring(0,4)
-                settingUpLocalStorage(userCredential.user.email,userCredential.user.displayName ? userCredential.user.displayName:displayName,userCredential.user.photoURL ?userCredential.user.photoURL : USER_DEFAULT_IMG )
+                settingUpLocalStorage(userCredential.user.email,userCredential.user.displayName ? userCredential.user.displayName:displayName,userCredential.user.photoURL ?userCredential.user.photoURL : USER_DEFAULT_IMG)
+                await axios.post(ADD_NEW_USER,{email:userCredential.user.email},config)
                 navigate('/')
             })
             .catch((error) => {
@@ -28,8 +32,9 @@ const LoginForm = () => {
     const signInWithGoogle = async(e) => {
         e.preventDefault()
        await signInWithPopup(auth, provider)
-            .then((result) => {
+            .then(async(result) => {
                 settingUpLocalStorage(result.user.email,result.user.displayName,result.user.photoURL)
+                await axios.post(ADD_NEW_USER,{email:result.user.email},config)
                 navigate('/')
             }).catch((error) => {
                 console.log(error)

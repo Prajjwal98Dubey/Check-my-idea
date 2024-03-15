@@ -4,6 +4,9 @@ import app from '../firebase'
 import { useState } from "react"
 import { USER_DEFAULT_IMG } from "../helpers/icons"
 import { useNavigate } from "react-router"
+import axios from "axios"
+import { ADD_NEW_USER } from "../helpers/backendapi"
+import { config } from "../helpers/config"
 const auth = getAuth(app)
 const RegisterForm = () => {
     const[email,setEmail] = useState("")
@@ -12,9 +15,10 @@ const RegisterForm = () => {
     const registerUser=async(e)=>{
         e.preventDefault()
         await createUserWithEmailAndPassword(auth,email,password)
-        .then((userCredential) => {
+        .then(async(userCredential) => {
             let displayName = userCredential.user.email.substring(0,4)
             localStorage.setItem('userCheckMyIdea',JSON.stringify({email:userCredential.user.email,displayName:displayName,photoUrl:USER_DEFAULT_IMG}))
+            await axios.post(ADD_NEW_USER,{email},config)
             navigate('/')
           })
           .catch((error) => {

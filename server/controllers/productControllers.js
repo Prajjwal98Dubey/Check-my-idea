@@ -9,10 +9,20 @@ const addMyProduct = async (req, res) => {
     res.json(newProduct)
 }
 
-
 const getProducts = async (req, res) => {
     const products = await Product.find()
     res.json(products)
 }
 
-module.exports = { addMyProduct, getProducts }
+const getSingleProduct = async (req, res) => {
+    const { id } = req.params
+    const product = await Product.findOne({ _id: id })
+    if (product) {
+        res.json(product)
+    }
+    else {
+        res.json({ message: 'No Product exists with this ID' })
+    }
+}
+
+module.exports = { addMyProduct, getProducts, getSingleProduct }

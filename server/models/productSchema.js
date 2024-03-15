@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const Comment = require('./commentSchema')
 const Product = mongoose.Schema({
     name: {
         type: String,
@@ -20,7 +21,8 @@ const Product = mongoose.Schema({
         type: String
     },
     comments: {
-        type: Object
+        type:[mongoose.Schema.Types.ObjectId],
+        ref:'Comment'
     },
     keywords: {
         type: [String]
