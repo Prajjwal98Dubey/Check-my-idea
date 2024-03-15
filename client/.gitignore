@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 backendapi.js
+firebase.js
 dist
 dist-ssr
 *.local
