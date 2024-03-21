@@ -14,6 +14,7 @@ const ProductDisplay = () => {
         const { data } = await axios.get(GET_ALL_PRODUCT, config)
         setProducts(data)
         setIsLoading(false)
+        console.log("----------------------",data)
         newProductContext.setMainProducts(data)
     }
     useEffect(() => {
@@ -21,7 +22,8 @@ const ProductDisplay = () => {
     }, [])
     return (
         <>
-            {isLoading ? <div>Loading...</div> :
+            {isLoading ? 
+            <div>Loading...</div> :
                 products.map((prod) => (
                     <div key={prod._id}>
                         <Link to={"/idea?id="+prod._id}>
@@ -50,7 +52,7 @@ const ProductDisplay = () => {
                             </div>
                             <div className="mt-[5px]">
                                 <img src={UPVOTE_ICON_IMG} className="w-[20px] h-[20px] cursor-pointer hover:scale-110" alt="loading" loading="lazy" />
-                                <div className="flex justify-center pt-[2px] text-gray-400 font-semibold text-sm">{prod.voteCount}</div>
+                                <div className="flex justify-center pt-[2px] text-gray-400 font-semibold text-sm">{prod.voteCount.length}</div>
                             </div>
 
                         </div>
@@ -58,6 +60,7 @@ const ProductDisplay = () => {
 
                     </div>
                 ))
+
             }
         </>
     )

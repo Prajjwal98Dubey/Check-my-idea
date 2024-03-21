@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import Navbar from "../components/Navbar"
 import { useSearchParams } from "react-router-dom"
 import axios from "axios"
-import { ADD_NEW_COMMENT, GET_ALL_COMMENTS, GET_SINGLE_PRODUCT } from "../helpers/backendapi"
+import { ADD_NEW_COMMENT, GET_ALL_COMMENTS, GET_SINGLE_PRODUCT, UPVOTE_THE_PRODUCT } from "../helpers/backendapi"
 import { config } from "../helpers/config"
 import Comments from "../components/Comments"
 
@@ -13,6 +13,12 @@ const Idea = () => {
     const[userComment,setUserComment] = useState("")
     const[allcomments,setAllComments] = useState([])
     const[loadComments,setLoadComments] = useState(true)
+    const handleUpVote=async()=>{
+        await axios.post(UPVOTE_THE_PRODUCT,{
+          productId:searchParam.get("id"),
+          user:JSON.parse(localStorage.getItem("userCheckMyIdea")).email
+        },config)
+    }
     const handleCommentBtn=async()=>{
         await axios.post(ADD_NEW_COMMENT,{
           user:JSON.parse(localStorage.getItem("userCheckMyIdea")).email,
@@ -48,7 +54,7 @@ const Idea = () => {
                 <div className="font-bold text-xl m-2">{item.name}</div>
                 <div className="text-gray-600 m-2">{item.shortDescription}</div>
                 </div>
-                <div className="flex items-center"><button className="w-[210px] h-[45px] p-2 bg-red-500 hover:cursor-pointer font-semibold hover:bg-red-700 text-md text-white rounded-lg">UPVOTE {item.voteCount}</button></div>
+                <div className="flex items-center"><button className="w-[210px] h-[45px] p-2 bg-red-500 hover:cursor-pointer font-semibold hover:bg-red-700 text-md text-white rounded-lg" onClick={handleUpVote}>UPVOTE {item.voteCount.length}</button></div>
               </div>
               <div className="m-2 font-Custom">
               <div className="text-gray-800">{item.longDescription}</div>

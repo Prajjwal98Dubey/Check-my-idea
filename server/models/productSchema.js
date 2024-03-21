@@ -28,8 +28,7 @@ const Product = mongoose.Schema({
         type: [String]
     },
     voteCount: {
-        type: Number,
-        default:0
+        type: [String]
     },
     time:{
         type:Date,
