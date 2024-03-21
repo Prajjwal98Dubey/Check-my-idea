@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { GET_ALL_PRODUCT } from "../helpers/backendapi"
 import { config } from "../helpers/config"
 import axios from "axios"
 import { COMMENT_ICON, FULL_STOP, UPVOTE_ICON_IMG } from "../helpers/icons"
+import { ProductContext } from "../contexts/productContexts"
+import {Link} from 'react-router-dom'
 
 const ProductDisplay = () => {
     const [products, setProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const newProductContext = useContext(ProductContext)
     const getProducts = async () => {
         const { data } = await axios.get(GET_ALL_PRODUCT, config)
         setProducts(data)
         setIsLoading(false)
+        newProductContext.setMainProducts(data)
     }
     useEffect(() => {
         getProducts()
@@ -20,6 +24,7 @@ const ProductDisplay = () => {
             {isLoading ? <div>Loading...</div> :
                 products.map((prod) => (
                     <div key={prod._id}>
+                        <Link to={"/idea?id="+prod._id}>
                         <div  className="flex justify-between p-2 hover:bg-green-200 cursor-pointer rounded-lg font-Custom">
                             <div><img className="w-[70px] h-[70px] rounded-lg" src={prod.logo} alt="loading" loading="lazy" /></div>
                             <div>
@@ -49,6 +54,8 @@ const ProductDisplay = () => {
                             </div>
 
                         </div>
+                        </Link>
+
                     </div>
                 ))
             }

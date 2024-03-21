@@ -1,7 +1,6 @@
+
 import Navbar from "../components/Navbar"
 import ProductDisplay from "../components/ProductDisplay"
-
-
 const Home = () => {
   return (
     <>

@@ -1,3 +1,4 @@
+const User= require('./userSchema')
 const mongoose = require('mongoose')
 const Comment = mongoose.Schema({
     user: {
