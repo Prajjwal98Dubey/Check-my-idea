@@ -5,6 +5,7 @@ import LoginForm from './components/LoginForm'
 import RegisterForm from './components/RegisterForm'
 import MyProfile from './pages/MyProfile'
 import Idea from './pages/Idea'
+import ProductWeb from './pages/ProductWeb'
 function App() {
   return (
     <>
@@ -37,6 +38,10 @@ const appRouter = createBrowserRouter([
   {
     path: '/idea',
     element: <Idea />
+  },
+  {
+    path:'/my-web',
+    element:<ProductWeb/>
   }
 ])
 export default App

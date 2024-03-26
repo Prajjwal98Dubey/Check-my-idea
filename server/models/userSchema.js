@@ -4,6 +4,9 @@ const User = mongoose.Schema({
     email:{
         type:String,
         required:true
+    },
+    upVotedProducts:{
+        type:[String]
     }
 })
 
