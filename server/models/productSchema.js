@@ -5,6 +5,13 @@ const Product = mongoose.Schema({
         type: String,
         required: true
     },
+    founder:{
+        type:String,
+        required:true
+    },
+    founderMessage:{
+        type:String
+    },
     logo: {
         type: String,
         default:"https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg?size=338&ext=jpg&ga=GA1.1.1546980028.1710374400&semt=sph"

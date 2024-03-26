@@ -1,9 +1,9 @@
 const Product = require('../models/productSchema')
 const User = require('../models/userSchema')
 const addMyProduct = async (req, res) => {
-    const { name, logo, shortDescription, longDescription, linkToWeb, comments, keywords, voteCount } = req.body
+    const { name, logo, founder, founderMessage, shortDescription, longDescription, linkToWeb, comments, keywords, voteCount } = req.body
     const newProduct = await Product.create({
-        name, logo, shortDescription, longDescription, linkToWeb, comments, keywords, voteCount
+        name, logo, founder, founderMessage, shortDescription, longDescription, linkToWeb, comments, keywords, voteCount
     })
     newProduct.save()
     res.json(newProduct)
@@ -24,7 +24,7 @@ const getSingleProduct = async (req, res) => {
 }
 const handleUpVote = async (req, res) => {
     const { productId, user } = req.body
-    const newUser = await User.findOne({email:user})
+    const newUser = await User.findOne({ email: user })
     const votes = await Product.findOne({ _id: productId })
     const hash = new Set(votes.voteCount)
     const userId = newUser._id.toString()
@@ -40,4 +40,4 @@ const handleUpVote = async (req, res) => {
     }
 }
 
-module.exports = { addMyProduct, getProducts, getSingleProduct, handleUpVote}
+module.exports = { addMyProduct, getProducts, getSingleProduct, handleUpVote }
