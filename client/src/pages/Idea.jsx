@@ -21,22 +21,23 @@ const Idea = () => {
     }, config)
     setUserComment("")
   }
-  const getSingleProduct = async () => {
-    const { data } = await axios.get(GET_SINGLE_PRODUCT + searchParam.get("id"), config)
-    setItem(data)
-    setIsLoading(false)
-  }
-  const getAllComments = async () => {
-    const { data } = await axios.get(GET_ALL_COMMENTS + searchParam.get("id"), config)
-    setAllComments(data)
-    setLoadComments(false)
-  }
   useEffect(() => {
+    const getSingleProduct = async () => {
+      const { data } = await axios.get(GET_SINGLE_PRODUCT + searchParam.get("id"), config)
+      setItem(data)
+      setIsLoading(false)
+    }
+    const getAllComments = async () => {
+      const { data } = await axios.get(GET_ALL_COMMENTS + searchParam.get("id"), config)
+      setAllComments(data)
+      setLoadComments(false)
+    }
     getSingleProduct()
     getAllComments()
-  }, [])
+  }, [searchParam])
   return (
     <>
+      {console.log("render")}
       <Navbar />
       <div className="flex justify-center mt-[10px]">
         <div className="w-[1000px]">
@@ -48,8 +49,6 @@ const Idea = () => {
                   <div className="font-bold text-xl m-2">{item.name}</div>
                   <div className="text-gray-600 m-2">{item.shortDescription}</div>
                 </div>
-                {/* <div>
-                </div> */}
                 <div className="flex items-center justify-evenly w-[400px]" >
                   <Link to={"/my-web?name=" + item.name}><button className="w-[210px] h-[45px] border border-gray-400  hover:border-red-400 hover:cursor-pointer mr-[3px] font-semibold rounded-lg">Visit</button></Link>
                   <button className="w-[210px] h-[45px] p-2 bg-red-500 hover:cursor-pointer font-semibold hover:bg-red-700 text-md text-white rounded-lg" onClick={() => handleUpVote(searchParam.get("id"), JSON.parse(localStorage.getItem("userCheckMyIdea")).email)}>UPVOTE {item.voteCount.length}</button></div>
@@ -70,23 +69,23 @@ const Idea = () => {
                 <div className="flex font-Custom">
                   <input type="text" value={userComment} onChange={(e) => setUserComment(e.target.value)} className="w-[850px] h-[45px] border border-gray-400 p-2 font-Cursive rounded-l-lg" />
                   <div><button className="w-[150px] h-[45px] bg-blue-500 text-white font-semibold hover:bg-blue-600 hover:cursor-pointer rounded-r-lg" onClick={handleCommentBtn}>Comment</button></div>
-                </div>   
-                  {
-                    item.founderMessage && <div className="bg-green-300 rounded-lg m-1">
-                        <div className="font-semibold">Founders Message:</div>
-                      <div className="p-1 ">
+                </div>
+                {
+                  item.founderMessage && <div className="bg-green-300 rounded-lg m-1">
+                    <div className="font-semibold">Founders Message:</div>
+                    <div className="p-1 ">
                       <div className="flex">
                         <div className="w-[40px] h-[40px] rounded-full bg-pink-400 text-white font-semibold flex justify-center items-center">{item.founder.charAt(0).toUpperCase()}</div>
                         <div className="ml-[3px] flex justify-center items-center text-gray-800">
-                            <div>
+                          <div>
                             <div className="font-semibold text-sm">{item.founder}</div>
                             <div className="text-sm">{item.founderMessage}</div>
-                            </div>
+                          </div>
                         </div>
+                      </div>
                     </div>
-                </div>
-                    </div>
-                  }                              
+                  </div>
+                }
                 {!loadComments && <div className="m-1"><Comments commentlist={allcomments} /></div>}
               </div>
             </>
