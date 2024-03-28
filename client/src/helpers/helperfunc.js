@@ -7,7 +7,6 @@ export const settingUpLocalStorage=(email,displayName,photoUrl)=>{
             email,displayName,photoUrl
         }))
 }
-
 export const handleUpVote=async(productId,user)=>{
     await axios.post(UPVOTE_THE_PRODUCT,{
       productId:productId,

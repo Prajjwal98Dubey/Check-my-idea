@@ -18,6 +18,7 @@ const Idea = () => {
     console.log("triggerMount changed:", triggerMount);
     const getSingleProduct = async () => {
       // console.log("fetching single product");
+      
       const { data } = await axios.get(GET_SINGLE_PRODUCT + searchParam.get("id"), config)
       setItem(data)
       setIsLoading(false)
@@ -55,12 +56,13 @@ const Idea = () => {
                   <div className="text-gray-600 m-2">{item.shortDescription}</div>
                 </div>
                 <div className="flex items-center justify-evenly w-[400px]" >
-                  <Link to={"/my-web?name=" + item.name}><button className="w-[210px] h-[45px] border border-gray-400  hover:border-red-400 hover:cursor-pointer mr-[3px] font-semibold rounded-lg">Visit</button></Link>
+                  <Link to={"/my-web?name=" + item.name}><button className="w-[210px] h-[45px] border border-gray-400  hover:border-red-400 hover:cursor-pointer mr-[3px] font-semibold rounde d-lg">Visit</button></Link>
+                  {/* {/* <Upvote item={item}/> */}
                   <button className="w-[210px] h-[45px] p-2 bg-red-500 hover:cursor-pointer font-semibold hover:bg-red-700 text-md text-white rounded-lg" onClick={() => {
                     handleUpVote(searchParam.get("id"), JSON.parse(localStorage.getItem("userCheckMyIdea")).email)
-                    
                   }
-                    }>UPVOTE {item.voteCount.length}</button></div>
+                    }>UPVOTE {item.voteCount.length}</button>
+                    </div>
               </div>
               <div className="m-2 font-Custom">
                 <div className="text-gray-800">{item.longDescription}</div>
@@ -97,7 +99,6 @@ const Idea = () => {
                 }
                 {!loadComments && 
                 <>
-                {/* {console.log(allcomments)} */}
                 <div className="m-1"><Comments commentlist={allcomments} /></div></>}
               </div>
             </>
@@ -108,5 +109,3 @@ const Idea = () => {
   )
 }
 export default Idea
-
-

@@ -10,7 +10,7 @@ const addNewComment = async (req, res) => {
     })
     newComment.save()
     const productComments = await Product.findOne({ _id: productId })
-    await Product.findOneAndUpdate({ _id: productId }, { comments: [...productComments.comments, newComment._id] })
+    await Product.findOneAndUpdate({ _id: productId }, { comments: [newComment._id,...productComments.comments] })
     res.json(newComment)
 
 }
