@@ -38,6 +38,7 @@ const Idea = () => {
       comment: userComment,
       productId: searchParam.get("id")
     }, config)
+    setTriggerMount(prev=>!prev)
     setUserComment("")
   }
   return (
