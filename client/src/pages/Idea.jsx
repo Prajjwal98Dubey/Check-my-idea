@@ -13,6 +13,25 @@ const Idea = () => {
   const [userComment, setUserComment] = useState("")
   const [allcomments, setAllComments] = useState([])
   const [loadComments, setLoadComments] = useState(true)
+  const [triggerMount, setTriggerMount] = useState(false)
+  useEffect(() => {
+    console.log("triggerMount changed:", triggerMount);
+    const getSingleProduct = async () => {
+      // console.log("fetching single product");
+      const { data } = await axios.get(GET_SINGLE_PRODUCT + searchParam.get("id"), config)
+      setItem(data)
+      setIsLoading(false)
+    }
+    const getAllComments = async () => {
+      setLoadComments(true)
+      const { data } = await axios.get(GET_ALL_COMMENTS + searchParam.get("id"), config)
+      // console.log("fetching all comments",data);
+      setAllComments(data)
+      setLoadComments(false)
+    }
+    getSingleProduct()
+    getAllComments()
+  }, [triggerMount,searchParam])
   const handleCommentBtn = async () => {
     await axios.post(ADD_NEW_COMMENT, {
       user: JSON.parse(localStorage.getItem("userCheckMyIdea")).email,
@@ -21,23 +40,8 @@ const Idea = () => {
     }, config)
     setUserComment("")
   }
-  useEffect(() => {
-    const getSingleProduct = async () => {
-      const { data } = await axios.get(GET_SINGLE_PRODUCT + searchParam.get("id"), config)
-      setItem(data)
-      setIsLoading(false)
-    }
-    const getAllComments = async () => {
-      const { data } = await axios.get(GET_ALL_COMMENTS + searchParam.get("id"), config)
-      setAllComments(data)
-      setLoadComments(false)
-    }
-    getSingleProduct()
-    getAllComments()
-  }, [searchParam])
   return (
     <>
-      {console.log("render")}
       <Navbar />
       <div className="flex justify-center mt-[10px]">
         <div className="w-[1000px]">
@@ -51,7 +55,11 @@ const Idea = () => {
                 </div>
                 <div className="flex items-center justify-evenly w-[400px]" >
                   <Link to={"/my-web?name=" + item.name}><button className="w-[210px] h-[45px] border border-gray-400  hover:border-red-400 hover:cursor-pointer mr-[3px] font-semibold rounded-lg">Visit</button></Link>
-                  <button className="w-[210px] h-[45px] p-2 bg-red-500 hover:cursor-pointer font-semibold hover:bg-red-700 text-md text-white rounded-lg" onClick={() => handleUpVote(searchParam.get("id"), JSON.parse(localStorage.getItem("userCheckMyIdea")).email)}>UPVOTE {item.voteCount.length}</button></div>
+                  <button className="w-[210px] h-[45px] p-2 bg-red-500 hover:cursor-pointer font-semibold hover:bg-red-700 text-md text-white rounded-lg" onClick={() => {
+                    handleUpVote(searchParam.get("id"), JSON.parse(localStorage.getItem("userCheckMyIdea")).email)
+                    
+                  }
+                    }>UPVOTE {item.voteCount.length}</button></div>
               </div>
               <div className="m-2 font-Custom">
                 <div className="text-gray-800">{item.longDescription}</div>
@@ -86,7 +94,10 @@ const Idea = () => {
                     </div>
                   </div>
                 }
-                {!loadComments && <div className="m-1"><Comments commentlist={allcomments} /></div>}
+                {!loadComments && 
+                <>
+                {/* {console.log(allcomments)} */}
+                <div className="m-1"><Comments commentlist={allcomments} /></div></>}
               </div>
             </>
           }
@@ -96,3 +107,5 @@ const Idea = () => {
   )
 }
 export default Idea
+
+
