@@ -7,6 +7,9 @@ const User = mongoose.Schema({
     },
     upVotedProducts:{
         type:[String]
+    },
+    isFounder:{
+        type:Boolean
     }
 })
 
