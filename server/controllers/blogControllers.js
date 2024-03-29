@@ -12,7 +12,6 @@ const createBlog = async (req, res) => {
         res.json(error)
     }
 }
-
 const getAllBlogs = async(req,res)=>{
     const allBlogs = await Blog.find({})
     res.json(allBlogs)
@@ -28,4 +27,13 @@ const deleteMyBlog = async(req,res)=>{
     await Blog.findByIdAndDelete({_id:blogId})
 }
 
-module.exports = { createBlog,getAllBlogs,getMyBlogs,deleteMyBlog }
+const editMyBlog = async(req,res)=>{
+    const {updatedTitle,updatedDescription,blogId} = req.body
+    const blog = await Blog.findByIdAndUpdate({_id:blogId},{
+        title:updatedTitle,
+        description:updatedDescription
+    })
+    res.json(blog)
+}
+
+module.exports = { createBlog,getAllBlogs,getMyBlogs,deleteMyBlog,editMyBlog }
