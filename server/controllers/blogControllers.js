@@ -14,7 +14,13 @@ const createBlog = async (req, res) => {
 }
 const getAllBlogs = async(req,res)=>{
     const allBlogs = await Blog.find({})
-    res.json(allBlogs)
+    let reponse=[]
+    for(let i=0;i<allBlogs.length;i++){
+        let obj = {}
+        let user = await User.findOne({_id:allBlogs[i].author})
+        reponse.push({user:user,blog:allBlogs[i]})
+    }
+    res.json(reponse)
 }
 const getMyBlogs =async(req,res)=>{
     const userEmail = req.query.id
