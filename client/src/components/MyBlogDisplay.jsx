@@ -3,6 +3,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { DELETE_MY_BLOG, EDIT_BLOG, GET_MY_BLOGS } from "../helpers/backendapi"
 import { CLOSE_ICONS, DELETE_ICON, EDIT_ICON, LIKE_ICON } from "../helpers/icons"
+import BackdropComp from "./BackdropComp"
 
 const MyBlogDisplay = ({ newBlogMount }) => {
     const [blogs, setBlogs] = useState([])
@@ -31,7 +32,7 @@ const MyBlogDisplay = ({ newBlogMount }) => {
             }
         })
         setTriggerMount(prev => !prev)
-
+        setEditModal(false)
     }
     useEffect(() => {
         const fetchMyBlogs = async () => {
@@ -81,23 +82,27 @@ const MyBlogDisplay = ({ newBlogMount }) => {
                 </div>
             }
             {editModal &&
-                <div className="absolute top-1/2 left-1/2">
-                    <div className="w-[550px] h-[380px] z-10 bg-white rounded-lg border border-gray-400">
+            <>
+                <BackdropComp setIsOpenModal={setEditModal}/>
+                <div className="absolute top-[29%] left-[29%] z-50">
+                    <div className="w-[490px] h-[290px] bg-white rounded-lg border border-gray-400">
                         <div className="flex justify-end">
                             <img src={CLOSE_ICONS} alt="loading" className="w-[25px] h-[15px] cursor-pointer m-1" onClick={() => setEditModal(false)} />
                         </div>
                         <div>
                             <div className="flex justify-center">
-                                <input type="text" className="w-[350px] h-[45px] m-1 rounded-lg border border-gray-500" value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />
+                                <input type="text" className="w-[340px] p-1 h-[35px] m-1 rounded-lg border border-red-200" value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />
                             </div>
                             <div className="flex justify-center">
-                                <textarea type="text" className="w-[350px] m-1 h-[250px] rounded-lg border border-gray-500" value={editeDescription} onChange={(e) => setEditedDescription(e.target.value)}></textarea>
+                                <textarea type="text" className=" p-1 w-[340px] m-1 h-[150px] rounded-lg border border-red-200" value={editeDescription} onChange={(e) => setEditedDescription(e.target.value)}></textarea>
                             </div>
                         </div>
                         <div className="flex justify-center"><button className="w-[90px] h-[30px]
         bg-red-600 hover:bg-red-500 hover:cursor-pointer rounded-lg font-semibold text-white" onClick={() => handleEditBlog()}>Edit</button></div>
                     </div>
-                </div>}
+                </div>
+                </>
+                }
         </>
     )
 }

@@ -2,6 +2,8 @@
 import { useState } from "react"
 import { CREATE_BLOG } from "../helpers/backendapi"
 import axios from "axios"
+import { CLOSE_ICONS } from "../helpers/icons"
+import BackdropComp from "./BackdropComp"
 const MyBlog = ({ setNewBlogMount }) => {
     const [isOpen, setIsOpen] = useState(false)
     const [title, setTitle] = useState("")
@@ -44,14 +46,18 @@ const MyBlog = ({ setNewBlogMount }) => {
         <>
             <div className="font-Custom flex justify-center p-10 relative"><button className="w-[200px] h-[40px] rounded-lg bg-red-500 cursor-pointer text-white font-semibold hover:bg-red-600" onClick={() => setIsOpen(true)}>Write a blog</button></div>
             {isOpen &&
-                <div className="font-Custom z-10 absolute left-1/3 top-[90px] w-[550px] h-[340px] border border-gray-400 shadow-lg rounded-lg bg-white">
+                <>
+                <BackdropComp setIsOpenModal={setIsOpen} />
+                <div className="font-Custom z-50 absolute left-1/3 top-[90px] w-[550px] h-[340px] border border-gray-400 shadow-lg rounded-lg bg-white">
                     <div className="flex justify-end">
-                        <div className="w-fit h-fit  mr-[5px] mt-[5px] cursor-pointer" onClick={() => setIsOpen(false)}>❌</div>
+                        <div className="flex justify-end">
+                            <img src={CLOSE_ICONS} alt="loading" className="w-fit h-fit  mr-[5px] mt-[5px] cursor-pointer" onClick={() => setIsOpen(false)}  />
+                        </div>
                     </div>
                     <div className="flex justify-center">
                         <div>
                             <input type="text" placeholder="Write the title of the blog" value={title} onChange={(e) => setTitle(e.target.value)} className="w-[340px] h-[35px] border border-red-300 p-2 m-2 text-sm" />
-                            <br />
+                            <br/>
                             <textarea className="w-[340px] h-[150px] border border-red-300 p-2 m-2 text-sm" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Write the description"></textarea>
                             <br />
                             <div className="flex justify-center text-sm">
@@ -119,6 +125,7 @@ const MyBlog = ({ setNewBlogMount }) => {
                     </div>
 
                 </div>
+                </>
             }
         </>
     )
