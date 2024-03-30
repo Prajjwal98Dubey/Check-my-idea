@@ -1,12 +1,12 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react"
 import { CREATE_BLOG } from "../helpers/backendapi"
 import axios from "axios"
-const MyBlog = () => {
+const MyBlog = ({ setNewBlogMount }) => {
     const [isOpen, setIsOpen] = useState(false)
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [topics, setTopics] = useState([])
-
     const handleCreatePost = async () => {
         await axios.post(CREATE_BLOG, {
             title: title,
@@ -22,9 +22,8 @@ const MyBlog = () => {
         setDescription("")
         setTopics([])
         setIsOpen(false)
-        
+        setNewBlogMount(prev => !prev)
     }
-
     const handleCheckBox = (options) => {
         for (let i = 0; i < topics.length; i++) {
             if (topics[i] === options) return
@@ -41,7 +40,6 @@ const MyBlog = () => {
             setTopics([...topics])
         }
     }
-
     return (
         <>
             <div className="font-Custom flex justify-center p-10 relative"><button className="w-[200px] h-[40px] rounded-lg bg-red-500 cursor-pointer text-white font-semibold hover:bg-red-600" onClick={() => setIsOpen(true)}>Write a blog</button></div>

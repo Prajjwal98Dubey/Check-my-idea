@@ -1,16 +1,19 @@
+/* eslint-disable react/prop-types */
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { DELETE_MY_BLOG, EDIT_BLOG, GET_MY_BLOGS } from "../helpers/backendapi"
 import { CLOSE_ICONS, DELETE_ICON, EDIT_ICON, LIKE_ICON } from "../helpers/icons"
 
-const MyBlogDisplay = () => {
+const MyBlogDisplay = ({ newBlogMount }) => {
     const [blogs, setBlogs] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [editModal, setEditModal] = useState(false)
     const [editedTitle, setEditedTitle] = useState("")
     const [editeDescription, setEditedDescription] = useState("")
-    const [editBlogId,setEditBlogId] = useState("")
+    const [editBlogId, setEditBlogId] = useState("")
+    const [triggerMount, setTriggerMount] = useState(false)
     const handleDeleteBlog = async (id) => {
+        setTriggerMount(prev => !prev)
         await axios.delete(DELETE_MY_BLOG + id, {
             headers: {
                 'Content-Type': 'application/json'
@@ -18,17 +21,17 @@ const MyBlogDisplay = () => {
         })
     }
     const handleEditBlog = async () => {
-        const { data } = await axios.put(EDIT_BLOG, {
+        await axios.put(EDIT_BLOG, {
             updatedTitle: editedTitle,
             updatedDescription: editeDescription,
-            blogId:editBlogId
+            blogId: editBlogId
         }, {
             headers: {
                 'Content-Type': "application/json"
             }
         })
+        setTriggerMount(prev => !prev)
 
-        console.log(data)
     }
     useEffect(() => {
         const fetchMyBlogs = async () => {
@@ -43,7 +46,7 @@ const MyBlogDisplay = () => {
 
         }
         fetchMyBlogs()
-    }, [])
+    }, [triggerMount, newBlogMount])
     return (
         <>
             {!isLoading &&
