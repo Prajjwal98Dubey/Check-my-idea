@@ -11,6 +11,8 @@ const auth = getAuth(app)
 const RegisterForm = () => {
     const[email,setEmail] = useState("")
     const[password,setPassword] = useState("")
+    const[name,setName] = useState("")
+    const[isFounder,setIsFounder]=useState(false)
     const navigate = useNavigate()
     const registerUser=async(e)=>{
         e.preventDefault()
@@ -18,7 +20,7 @@ const RegisterForm = () => {
         .then(async(userCredential) => {
             let displayName = userCredential.user.email.substring(0,4)
             localStorage.setItem('userCheckMyIdea',JSON.stringify({email:userCredential.user.email,displayName:displayName,photoUrl:USER_DEFAULT_IMG}))
-            await axios.post(ADD_NEW_USER,{email},config)
+            await axios.post(ADD_NEW_USER,{email,name,isFounder},config)
             navigate('/')
           })
           .catch((error) => {
@@ -28,16 +30,26 @@ const RegisterForm = () => {
         setPassword("")
         return
     }
+    const handleIsFounder=()=>{
+        setIsFounder(prev=>!prev)
+    }
     return (
         <>
             <Navbar />
             <div className="flex justify-center mt-[10px]">
                 <form>
+                <label htmlFor="name">Name</label>
+                    <input type="name" value={name} onChange={(e)=>setName(e.target.value)} className="w-[400px] h-[40px] rounded-lg border border-gray-400 p-1 m-1" />
+                    <br/>
                     <label htmlFor="email">Email</label>
                     <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} className="w-[400px] h-[40px] rounded-lg border border-gray-400 p-1 m-1" />
                     <br />
                     <label htmlFor="email">Password</label>
                     <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} className="w-[400px] h-[40px] rounded-lg border border-gray-400 p-1 m-1" />
+                    <div className="flex justify-center">
+                        <input type="checkbox" onChange={()=>handleIsFounder()} />
+                        <label htmlFor="isFounder">Are you a founder</label>
+                    </div>
                     <div className="flex justify-center"><button className="font-semibold w-[140px] h-[40px] text-white bg-blue-500 cursor-pointer hover:bg-blue-400 rounded-lg" onClick={(e)=>registerUser(e)}>Register</button></div>
                 </form>
             </div>
