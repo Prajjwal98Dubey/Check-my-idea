@@ -6,6 +6,7 @@ import { COMMENT_ICON, FULL_STOP, UPVOTE_ICON_IMG } from "../helpers/icons"
 import { ProductContext } from "../contexts/productContexts"
 import {Link} from 'react-router-dom'
 import { handleUpVote } from "../helpers/helperfunc"
+import MainProductShimmer from "../shimmers/MainProductShimmer"
 
 const ProductDisplay = () => {
     const [products, setProducts] = useState([])
@@ -23,7 +24,7 @@ const ProductDisplay = () => {
     return (
         <>
             {isLoading ? 
-            <div>Loading...</div> :
+            <MainProductShimmer/> :
                 products.map((prod) => (
                     <div key={prod._id}>
                         <Link to={"/idea?id="+prod._id}>

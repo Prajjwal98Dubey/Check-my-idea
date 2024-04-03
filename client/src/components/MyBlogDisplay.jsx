@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { DELETE_MY_BLOG, EDIT_BLOG, GET_MY_BLOGS } from "../helpers/backendapi"
 import { CLOSE_ICONS, DELETE_ICON, EDIT_ICON, LIKE_ICON } from "../helpers/icons"
 import BackdropComp from "./BackdropComp"
+import MyBlogShimmer from "../shimmers/MyBlogShimmer"
 
 const MyBlogDisplay = ({ newBlogMount }) => {
     const [blogs, setBlogs] = useState([])
@@ -50,7 +51,7 @@ const MyBlogDisplay = ({ newBlogMount }) => {
     }, [triggerMount, newBlogMount])
     return (
         <>
-            {!isLoading &&
+            {isLoading ?  <MyBlogShimmer/> :
                 <div className="font-Custom m-2 p-1">
                     {blogs.length === 0 && <div className="flex justify-center p-10 font-semibold font-Custom">You have not posted any blog yet.</div>}
                     {blogs.map((blog) => (

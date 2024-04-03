@@ -6,6 +6,8 @@ import { ADD_NEW_COMMENT, GET_ALL_COMMENTS, GET_SINGLE_PRODUCT } from "../helper
 import { config } from "../helpers/config"
 import Comments from "../components/Comments"
 import { handleUpVote } from "../helpers/helperfunc"
+import CommentShimmer from "../shimmers/CommentShimmer"
+import IdeaShimmer from "../shimmers/IdeaShimmer"
 const Idea = () => {
   const [item, setItem] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -17,8 +19,6 @@ const Idea = () => {
   useEffect(() => {
     console.log("triggerMount changed:", triggerMount);
     const getSingleProduct = async () => {
-      // console.log("fetching single product");
-      
       const { data } = await axios.get(GET_SINGLE_PRODUCT + searchParam.get("id"), config)
       setItem(data)
       setIsLoading(false)
@@ -47,7 +47,7 @@ const Idea = () => {
       <Navbar />
       <div className="flex justify-center mt-[10px]">
         <div className="w-[1000px]">
-          {!isLoading &&
+          {isLoading ? <IdeaShimmer/> :
             <>
               <div className="font-Custom flex justify-between">
                 <div>
@@ -97,7 +97,7 @@ const Idea = () => {
                     </div>
                   </div>
                 }
-                {!loadComments && 
+                {loadComments ? <CommentShimmer/> :
                 <>
                 <div className="m-1"><Comments commentlist={allcomments} /></div></>}
               </div>

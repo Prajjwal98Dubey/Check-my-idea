@@ -2,6 +2,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { GET_ALL_BLOGS } from "../helpers/backendapi"
 import { LIKE_ICON } from "../helpers/icons"
+import MainBlogShimmer from "../shimmers/MainBlogShimmer"
 
 const MainBlogsPage = () => {
     const[blogs,setBlogs] = useState([])
@@ -20,9 +21,8 @@ const MainBlogsPage = () => {
     },[])
   return (
    <>
-   {!isLoading &&
+   {isLoading ? <MainBlogShimmer/> : 
         <>
-        {console.log(blogs)}
                 <div className="font-Custom m-2 p-1">
                     {blogs.map((child) => (
                         <div key={child.blog._id} className="m-2 hover:shadow-xl rounded-lg border border-gray-300 shadow-md">
