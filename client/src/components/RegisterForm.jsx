@@ -1,13 +1,15 @@
-import Navbar from "./Navbar"
+// import Navbar from "./Navbar"
 import {getAuth,createUserWithEmailAndPassword} from 'firebase/auth'
 import app from '../firebase'
-import { useState } from "react"
+import { Suspense, lazy, useState } from "react"
 import { USER_DEFAULT_IMG } from "../helpers/icons"
 import { useNavigate } from "react-router"
 import axios from "axios"
 import { ADD_NEW_USER } from "../helpers/backendapi"
 import { config } from "../helpers/config"
 const auth = getAuth(app)
+
+const Navbar = lazy(()=>import("./Navbar"))
 const RegisterForm = () => {
     const[email,setEmail] = useState("")
     const[password,setPassword] = useState("")
@@ -35,7 +37,7 @@ const RegisterForm = () => {
     }
     return (
         <>
-            <Navbar />
+           <Suspense fallback={<h2>Loading...</h2>}><Navbar /></Suspense> 
             <div className="flex justify-center mt-[10px]">
                 <form>
                 <label htmlFor="name">Name</label>

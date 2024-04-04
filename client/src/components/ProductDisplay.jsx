@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { Suspense, lazy, useContext, useEffect, useState } from "react"
 import { GET_ALL_PRODUCT } from "../helpers/backendapi"
 import { config } from "../helpers/config"
 import axios from "axios"
@@ -6,7 +6,9 @@ import { COMMENT_ICON, FULL_STOP, UPVOTE_ICON_IMG } from "../helpers/icons"
 import { ProductContext } from "../contexts/productContexts"
 import {Link} from 'react-router-dom'
 import { handleUpVote } from "../helpers/helperfunc"
-import MainProductShimmer from "../shimmers/MainProductShimmer"
+// import MainProductShimmer from "../shimmers/MainProductShimmer"
+
+const MainProductShimmer = lazy(()=>import("../shimmers/MainProductShimmer"))
 
 const ProductDisplay = () => {
     const [products, setProducts] = useState([])
@@ -24,7 +26,7 @@ const ProductDisplay = () => {
     return (
         <>
             {isLoading ? 
-            <MainProductShimmer/> :
+            <Suspense fallback={<h2>Loading...</h2>}><MainProductShimmer/></Suspense> :
                 products.map((prod) => (
                     <div key={prod._id}>
                         <Link to={"/idea?id="+prod._id}>

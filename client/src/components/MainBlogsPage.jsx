@@ -1,8 +1,10 @@
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { Suspense, lazy, useEffect, useState } from "react"
 import { GET_ALL_BLOGS } from "../helpers/backendapi"
 import { LIKE_ICON } from "../helpers/icons"
-import MainBlogShimmer from "../shimmers/MainBlogShimmer"
+// import MainBlogShimmer from "../shimmers/MainBlogShimmer"
+
+const MainBlogShimmer = lazy(()=>import("../shimmers/MainBlogShimmer"))
 
 const MainBlogsPage = () => {
     const[blogs,setBlogs] = useState([])
@@ -21,7 +23,7 @@ const MainBlogsPage = () => {
     },[])
   return (
    <>
-   {isLoading ? <MainBlogShimmer/> : 
+   {isLoading ?<Suspense fallback={<h2>Loading...</h2>}><MainBlogShimmer/></Suspense>  : 
         <>
                 <div className="font-Custom m-2 p-1">
                     {blogs.map((child) => (

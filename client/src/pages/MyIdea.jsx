@@ -1,9 +1,11 @@
 // import React from 'react'
 import { useState } from "react"
-import Navbar from "../components/Navbar"
+// import Navbar from "../components/Navbar"
 import axios from "axios"
 import { ADD_MY_PRODUCT, CLOUD_NAME, UPLOAD_PRESET } from "../helpers/backendapi"
 import { config } from "../helpers/config"
+import { lazy,Suspense } from "react"
+const Navbar = lazy(()=>import("../components/Navbar"))
 const MyIdea = () => {
     const [name, setName] = useState("")
     const [shortDesc, setShortDesc] = useState("")
@@ -55,7 +57,7 @@ const MyIdea = () => {
     }
     return (
         <>
-            <Navbar />
+            <Suspense fallback={<h2>Loading...</h2>}><Navbar /></Suspense>
             <div className="flex justify-center mt-[15px] font-Custom">
                 <form>
                     <label htmlFor="name">Name of the Startup</label>

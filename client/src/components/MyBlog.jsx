@@ -1,9 +1,11 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react"
+import { Suspense, lazy, useState } from "react"
 import { CREATE_BLOG } from "../helpers/backendapi"
 import axios from "axios"
 import { CLOSE_ICONS } from "../helpers/icons"
-import BackdropComp from "./BackdropComp"
+// import BackdropComp from "./BackdropComp"
+
+const BackdropComp = lazy(()=>import("./BackdropComp"))
 const MyBlog = ({ setNewBlogMount }) => {
     const [isOpen, setIsOpen] = useState(false)
     const [title, setTitle] = useState("")
@@ -47,7 +49,7 @@ const MyBlog = ({ setNewBlogMount }) => {
             <div className="font-Custom flex justify-center p-10 relative"><button className="w-[200px] h-[40px] rounded-lg bg-red-500 cursor-pointer text-white font-semibold hover:bg-red-600" onClick={() => setIsOpen(true)}>Write a blog</button></div>
             {isOpen &&
                 <>
-                <BackdropComp setIsOpenModal={setIsOpen} />
+                <Suspense fallback={<h2>Loading...</h2>}><BackdropComp setIsOpenModal={setIsOpen} /></Suspense>
                 <div className="font-Custom z-50 absolute left-1/3 top-[90px] w-[550px] h-[340px] border border-gray-400 shadow-lg rounded-lg bg-white">
                     <div className="flex justify-end">
                         <div className="flex justify-end">

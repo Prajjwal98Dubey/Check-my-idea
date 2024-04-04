@@ -1,10 +1,15 @@
 /* eslint-disable react/prop-types */
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { Suspense, lazy, useEffect, useState } from "react"
 import { DELETE_MY_BLOG, EDIT_BLOG, GET_MY_BLOGS } from "../helpers/backendapi"
 import { CLOSE_ICONS, DELETE_ICON, EDIT_ICON, LIKE_ICON } from "../helpers/icons"
-import BackdropComp from "./BackdropComp"
-import MyBlogShimmer from "../shimmers/MyBlogShimmer"
+// import BackdropComp from "./BackdropComp"
+// import MyBlogShimmer from "../shimmers/MyBlogShimmer"
+
+const BackdropComp = lazy(()=>import("./BackdropComp"))
+const MyBlogShimmer = lazy(()=>import("../shimmers/MyBlogShimmer"))
+ 
+
 
 const MyBlogDisplay = ({ newBlogMount }) => {
     const [blogs, setBlogs] = useState([])
@@ -51,7 +56,7 @@ const MyBlogDisplay = ({ newBlogMount }) => {
     }, [triggerMount, newBlogMount])
     return (
         <>
-            {isLoading ?  <MyBlogShimmer/> :
+            {isLoading ?  <Suspense fallback={<h2>Loading...</h2>}><MyBlogShimmer/></Suspense>:
                 <div className="font-Custom m-2 p-1">
                     {blogs.length === 0 && <div className="flex justify-center p-10 font-semibold font-Custom">You have not posted any blog yet.</div>}
                     {blogs.map((blog) => (
@@ -84,7 +89,7 @@ const MyBlogDisplay = ({ newBlogMount }) => {
             }
             {editModal &&
             <>
-                <BackdropComp setIsOpenModal={setEditModal}/>
+                <Suspense fallback={<h2>Loading...</h2>}><BackdropComp setIsOpenModal={setEditModal}/></Suspense>
                 <div className="absolute top-[29%] left-[29%] z-50">
                     <div className="w-[490px] h-[290px] bg-white rounded-lg border border-gray-400">
                         <div className="flex justify-end">

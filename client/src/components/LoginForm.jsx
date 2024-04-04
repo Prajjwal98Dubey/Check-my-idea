@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom"
-import Navbar from "./Navbar"
+// import Navbar from "./Navbar"
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import app from "../firebase"
-import { useState } from "react"
+import { lazy, useState ,Suspense} from "react"
 import { GOOGLE_ICON_IMG, USER_DEFAULT_IMG } from "../helpers/icons"
 import { settingUpLocalStorage } from "../helpers/helperfunc"
 import axios from "axios"
@@ -10,6 +10,8 @@ import { ADD_NEW_USER } from "../helpers/backendapi"
 import { config } from "../helpers/config"
 const auth = getAuth(app)
 const provider = new GoogleAuthProvider(app)
+
+const Navbar = lazy(()=>import("./Navbar"))
 const LoginForm = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -42,7 +44,7 @@ const LoginForm = () => {
     }
     return (
         <>
-            <Navbar />
+            <Suspense fallback={<h2>Loading...</h2>}><Navbar /></Suspense>
             <div className="flex justify-center mt-[10px] font-Custom">
                 <form>
                     <label htmlFor="email">Email</label>

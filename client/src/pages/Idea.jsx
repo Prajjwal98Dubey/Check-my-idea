@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react"
-import Navbar from "../components/Navbar"
+// import Navbar from "../components/Navbar"
 import { useSearchParams, Link } from "react-router-dom"
 import axios from "axios"
 import { ADD_NEW_COMMENT, GET_ALL_COMMENTS, GET_SINGLE_PRODUCT } from "../helpers/backendapi"
 import { config } from "../helpers/config"
-import Comments from "../components/Comments"
+// import Comments from "../components/Comments"
 import { handleUpVote } from "../helpers/helperfunc"
-import CommentShimmer from "../shimmers/CommentShimmer"
-import IdeaShimmer from "../shimmers/IdeaShimmer"
+// import CommentShimmer from "../shimmers/CommentShimmer"
+// import IdeaShimmer from "../shimmers/IdeaShimmer"
+import {lazy,Suspense} from 'react'
+
+const Navbar = lazy(()=>import("../components/Navbar"))
+const Comments = lazy(()=>import("../components/Comments"))
+const CommentShimmer = lazy(()=>import("../shimmers/CommentShimmer"))
+const IdeaShimmer = lazy(()=>import("../shimmers/IdeaShimmer"))
+
+
 const Idea = () => {
   const [item, setItem] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -44,10 +52,10 @@ const Idea = () => {
   }
   return (
     <>
-      <Navbar />
+      <Suspense fallback={<h2>Loading...</h2>}><Navbar /></Suspense>
       <div className="flex justify-center mt-[10px]">
         <div className="w-[1000px]">
-          {isLoading ? <IdeaShimmer/> :
+          {isLoading ? <Suspense fallback={<h2>Loading...</h2>}><IdeaShimmer/></Suspense> :
             <>
               <div className="font-Custom flex justify-between">
                 <div>
@@ -97,9 +105,9 @@ const Idea = () => {
                     </div>
                   </div>
                 }
-                {loadComments ? <CommentShimmer/> :
+                {loadComments ? <Suspense fallback={<h2>Loading...</h2>}><CommentShimmer/></Suspense> :
                 <>
-                <div className="m-1"><Comments commentlist={allcomments} /></div></>}
+                <div className="m-1"><Suspense fallback={<h2>Loading...</h2>}><Comments commentlist={allcomments} /></Suspense></div></>}
               </div>
             </>
           }
