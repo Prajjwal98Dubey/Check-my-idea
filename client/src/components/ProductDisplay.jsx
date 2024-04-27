@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Suspense, lazy, useContext, useEffect, useState } from "react"
 import { GET_ALL_PRODUCT } from "../helpers/backendapi"
 import { config } from "../helpers/config"
@@ -6,23 +7,22 @@ import { COMMENT_ICON, FULL_STOP, UPVOTE_ICON_IMG } from "../helpers/icons"
 import { ProductContext } from "../contexts/productContexts"
 import {Link} from 'react-router-dom'
 import { handleUpVote } from "../helpers/helperfunc"
-// import MainProductShimmer from "../shimmers/MainProductShimmer"
-
 const MainProductShimmer = lazy(()=>import("../shimmers/MainProductShimmer"))
 
-const ProductDisplay = () => {
+const ProductDisplay = ({skip}) => {
     const [products, setProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const newProductContext = useContext(ProductContext)
     const getProducts = async () => {
-        const { data } = await axios.get(GET_ALL_PRODUCT, config)
+        console.log(GET_ALL_PRODUCT+ `?skip=${skip}`)
+        const { data } = await axios.get(GET_ALL_PRODUCT+ `?skip=${skip}`, config)
         setProducts(data)
         setIsLoading(false)
         newProductContext.setMainProducts(data)
     }
     useEffect(() => {
         getProducts()
-    }, [])
+    }, [skip])
     return (
         <>
             {isLoading ? 

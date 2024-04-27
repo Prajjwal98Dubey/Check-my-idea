@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 // import Navbar from "../components/Navbar"
 import { useSearchParams, Link } from "react-router-dom"
 import axios from "axios"
@@ -24,10 +24,14 @@ const Idea = () => {
   const [allcomments, setAllComments] = useState([])
   const [loadComments, setLoadComments] = useState(true)
   const [triggerMount, setTriggerMount] = useState(false)
+  const singleProductRef = useRef(false)
   useEffect(() => {
     console.log("triggerMount changed:", triggerMount);
+    if(singleProductRef.current) return 
     const getSingleProduct = async () => {
       const { data } = await axios.get(GET_SINGLE_PRODUCT + searchParam.get("id"), config)
+      singleProductRef.current = true
+      console.log("Single Product API call.")
       setItem(data)
       setIsLoading(false)
     }
@@ -83,6 +87,9 @@ const Idea = () => {
                   ))}
                 </div>
               </div>
+              <Link to={`/user-profile?uid=${item.founder}`}><div className="m-2">
+                <div className="font-semibold">Creator - <span className="text-blue-700 hover:underline hover:cursor-pointer">{item.founder}</span></div>
+              </div></Link>
               <div className="m-2 font-Custom">
                 <div className="text-gray-800 text-xl">Express Your Opinion</div>
                 <div className="flex font-Custom">

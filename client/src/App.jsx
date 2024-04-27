@@ -1,5 +1,6 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
+import UserProfile from './pages/UserProfile'
 
 // import Home from './pages/Home'
 // import MyIdea from './pages/MyIdea'
@@ -70,6 +71,10 @@ const appRouter = createBrowserRouter([
     element: <Suspense fallback={<h1>Loading...</h1>}>
     <ProductWeb />
   </Suspense>
+  },
+  {
+    path:'/user-profile',
+    element:<UserProfile/>
   }
 ])
 export default App

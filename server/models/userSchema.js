@@ -12,7 +12,13 @@ const User = mongoose.Schema({
     },
     isFounder:{
         type:Boolean
-    }
+    },
+    followers:{
+        type:[String]
+    },
+    following:{
+        type:[String]
+    },
 })
 
 module.exports= mongoose.model('User',User)

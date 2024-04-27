@@ -7,6 +7,7 @@ const commentRouter = require('./routes/commentRoutes')
 const blogRouter = require('./routes/blogRoutes')
 const app = express()
 
+
 app.use(express.json())
 app.use(cors())
 
@@ -22,5 +23,4 @@ const startServer = async()=>{
     await app.listen(3000,()=>console.log("Server Connected at 3000"))
 
 }
-
 startServer()

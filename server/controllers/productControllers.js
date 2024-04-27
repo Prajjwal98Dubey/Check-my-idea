@@ -1,26 +1,44 @@
 const Product = require('../models/productSchema')
 const User = require('../models/userSchema')
+const client = require('redis')
 const addMyProduct = async (req, res) => {
     const { name, logo, founder, founderMessage, shortDescription, longDescription, linkToWeb, comments, keywords, voteCount } = req.body
     const newProduct = await Product.create({
         name, logo, founder, founderMessage, shortDescription, longDescription, linkToWeb, comments, keywords, voteCount
-    })
+    }) 
     newProduct.save()
     res.json(newProduct)
 }
 const getProducts = async (req, res) => {
-    const products = await Product.find()
-    res.json(products)
+    let skip = req.query.skip
+    let newProducts;
+    let products = await Product.find()
+    newProducts = products.slice(0,skip+3)
+    console.log(newProducts,newProducts.length)
+    res.json(newProducts)
 }
 const getSingleProduct = async (req, res) => {
     const { id } = req.params
-    const product = await Product.findOne({ _id: id })
-    if (product) {
-        res.json(product)
+    let redisClient = client.createClient({})
+    redisClient.on('error', (err) => console.log("Redis Client Error"))
+    await redisClient.connect()
+    if (await redisClient.GET(`productId-${id}`)) {
+        const productObj = await redisClient.GET(`productId-${id}`)
+        res.json(JSON.parse(productObj))
+        // console.log("Redis Call!!!")
     }
     else {
-        res.json({ message: 'No Product exists with this ID' })
+        const product = await Product.findOne({ _id: id })
+        if (product) {
+            // console.log("Database Call!!!")
+            await redisClient.SET(`productId-${id}`, JSON.stringify(product))
+            res.json(product)
+        }
+        else {
+            res.json({ message: 'No Product exists with this ID' })
+        }
     }
+
 }
 const handleUpVote = async (req, res) => {
     const { productId, user } = req.body
@@ -42,3 +60,5 @@ const handleUpVote = async (req, res) => {
 }
 
 module.exports = { addMyProduct, getProducts, getSingleProduct, handleUpVote }
+
+// 174ms
