@@ -14,7 +14,7 @@ const getProducts = async (req, res) => {
     let newProducts;
     let products = await Product.find()
     newProducts = products.slice(0,skip+3)
-    console.log(newProducts,newProducts.length)
+    // console.log(newProducts,newProducts.length)
     res.json(newProducts)
 }
 const getSingleProduct = async (req, res) => {
@@ -44,7 +44,7 @@ const handleUpVote = async (req, res) => {
     const { productId, user } = req.body
     const newUser = await User.findOne({ email: user })
     const votes = await Product.findOne({ _id: productId })
-    console.log(votes)
+    // console.log(votes)
     const hash = new Set(votes.voteCount)
     const userId = newUser._id.toString()
     if (hash.has(userId)) {

@@ -22,14 +22,47 @@ const getUser = async (req, res) => {
 }
 const addFollower = async (req, res) => {
     const { followee, followerEmail } = req.body
-    let follower = await User.findOne({ email: followerEmail })
-    const followeeDetails = await User.findOne({_id:followee})
-    let followersList;
-    followersList = [...(followeeDetails.followers),follower._id]
-    const userFollowee = await User.updateOne({_id:followee},{followers:followersList})
-    const filter = await User.findOne({_id:follower._id})
-    let updatedFollowing = [...filter.following,followee]
-    const filterFollowing = await User.updateOne({_id:follower._id},{following:updatedFollowing})
-    res.json({ userFollowee, filterFollowing })
+    let followeeResponse;
+    let followerResponse;
+    // the one who will be followed
+    let followerDetails = await User.findOne({ email: followerEmail })
+    let followerId = followerDetails._id
+    let followeeDetails = await User.findOne({ _id: followee })
+    let followeeList = []
+    let followeeListSet = new Set()
+    for (let i = 0; i < followeeDetails.followers.length; i++) {
+        followeeListSet.add(followeeDetails.followers[i])
+    }
+    if (followeeListSet.has(followerId.toString())) {
+        // remove it from the list
+        followeeListSet.delete(followerId.toString())
+        followeeListSet.forEach((item) => followeeList.push(item))
+        followeeResponse = await User.updateOne({ _id: followee}, {followers: followeeList })
+
+    }
+    else {
+        // add to the list
+        followeeList = [...followeeDetails.followers, followerId]
+        followeeResponse = await User.updateOne({ _id: followee}, {followers: followeeList})
+    }
+
+    // the one who will follow
+    let followerListSet = new Set()
+    let followerList = []
+    for (let i = 0; i < followerDetails.following.length; i++) {
+        followerListSet.add(followerDetails.following[i])
+    }
+    if (followerListSet.has(followee)) {
+        // remove it from the list
+        followerListSet.delete(followee)
+        followerListSet.forEach((item) => followerList.push(item))
+        followerResponse = await User.updateOne({ _id: followerId }, { following: followerList })
+    }
+    else {
+        // add to the list.
+        followerList = [...followerDetails.following, followee]
+        followerResponse = await User.updateOne({ _id: followerId }, { following: followerList })
+    }
+    res.json({ followeeResponse, followerResponse })
 }
 module.exports = { addNewUser, getUser, addFollower }
