@@ -5,7 +5,7 @@ import { useNavigate } from "react-router"
 import { useEffect, useState } from "react"
 import { lazy, Suspense } from "react"
 import axios from "axios"
-import { GET_USER } from "../helpers/backendapi"
+import { GET_MY_DETAILS } from "../helpers/backendapi"
 import { config } from "../helpers/config"
 
 const Navbar = lazy(() => import("../components/Navbar"))
@@ -23,7 +23,7 @@ const MyProfile = () => {
   }
   useEffect(() => {
     const getMyDetails = async () => {
-      const { data } = await axios.get(GET_USER + `?uid=${JSON.parse(localStorage.getItem("userCheckMyIdea")).email}`, config)
+      const { data } = await axios.get(GET_MY_DETAILS + `?uid=${JSON.parse(localStorage.getItem("userCheckMyIdea")).email}`, config)
       setUser(data)
       setIsLoading(false)
     }
