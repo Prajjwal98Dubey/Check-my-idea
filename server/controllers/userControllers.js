@@ -83,26 +83,3 @@ const addFollower = async (req, res) => {
     res.json({ followeeResponse, followerResponse, followerIsFollowing })
 }
 module.exports = { addNewUser, getUser, addFollower ,getMyDetails}
-
-
-// const isLoginUserPresentEmail = req.query.luser
-//     console.log("Login User:-",isLoginUserPresentEmail)
-//     const userEmail = req.query.uid
-//     console.log("Checking User Email:-",userEmail)
-
-//     let isPresent = false;
-//     let isLoginUserPresentId = await User.findOne({ email: isLoginUserPresentEmail })
-//     const user = await User.findOne({ email: userEmail })
-//     if (user.followers && user.followers.length > 0) {
-//         let followerSet = new Set(user.followers)
-//         console.log(isLoginUserPresentId)
-//         console.log(followerSet)
-//         if (followerSet.has(isLoginUserPresentId._id.toString())) {
-//             isPresent = true
-//         }
-//         else {
-//             isPresent = false
-//         }
-//     }
-
-//     res.json({ user, isPresent })

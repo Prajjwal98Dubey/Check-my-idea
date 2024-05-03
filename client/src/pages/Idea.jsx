@@ -35,6 +35,17 @@ const Idea = () => {
       setItem(data)
       setIsLoading(false)
     }
+    // const getAllComments = async () => {
+    //   setLoadComments(true)
+    //   const { data } = await axios.get(GET_ALL_COMMENTS + searchParam.get("id"), config)
+    //   // console.log("fetching all comments",data);
+    //   setAllComments(data)
+    //   setLoadComments(false)
+    // }
+    getSingleProduct()
+    // getAllComments()
+  }, [searchParam])
+  useEffect(()=>{
     const getAllComments = async () => {
       setLoadComments(true)
       const { data } = await axios.get(GET_ALL_COMMENTS + searchParam.get("id"), config)
@@ -42,16 +53,18 @@ const Idea = () => {
       setAllComments(data)
       setLoadComments(false)
     }
-    getSingleProduct()
     getAllComments()
-  }, [triggerMount,searchParam])
+  },[searchParam, triggerMount])
+
+
+
   const handleCommentBtn = async () => {
     await axios.post(ADD_NEW_COMMENT, {
       user: JSON.parse(localStorage.getItem("userCheckMyIdea")).email,
       comment: userComment,
       productId: searchParam.get("id")
     }, config)
-    setTriggerMount(prev=>!prev)
+    setTriggerMount(!triggerMount)
     setUserComment("")
   }
   return (
