@@ -24,7 +24,6 @@ const getSingleProduct = async (req, res) => {
     if (await redisClient.GET(`productId-${id}`)) {
         const productObj = await redisClient.GET(`productId-${id}`)
         res.json(JSON.parse(productObj))
-        console.log("This is redis call.")
     }
     else {
         const product = await Product.findOne({ _id: id })
@@ -32,7 +31,6 @@ const getSingleProduct = async (req, res) => {
 
             await redisClient.SET(`productId-${id}`, JSON.stringify(product))
             res.json(product)
-            console.log("This is database call.")
         }
         else {
             res.json({ message: 'No Product exists with this ID' })

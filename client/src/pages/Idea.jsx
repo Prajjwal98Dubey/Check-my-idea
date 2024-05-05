@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 // import Navbar from "../components/Navbar"
 import { useSearchParams, Link } from "react-router-dom"
 import axios from "axios"
-import { ADD_NEW_COMMENT, GET_ALL_COMMENTS, GET_SINGLE_PRODUCT, GET_UPVOTE_COUNT } from "../helpers/backendapi"
+import { ADD_NEW_COMMENT, GET_ALL_COMMENTS, GET_MY_DETAILS, GET_SINGLE_PRODUCT, GET_UPVOTE_COUNT } from "../helpers/backendapi"
 import { config } from "../helpers/config"
 // import Comments from "../components/Comments"
 import { handleUpVote } from "../helpers/helperfunc"
@@ -27,6 +27,7 @@ const Idea = () => {
   const [upvoteTrigger, setUpvoteTrigger] = useState(false)
   const [votes, setVotes] = useState([])
   const [upVoteLoading, setUpVoteLoading] = useState(true)
+  const [isUpVoted, setIsUpVoted] = useState(false)
   const singleProductRef = useRef(false)
   useEffect(() => {
     if (singleProductRef.current) return
@@ -50,7 +51,14 @@ const Idea = () => {
   useEffect(() => {
     const getUpVoteCount = async () => {
       const { data } = await axios.get(GET_UPVOTE_COUNT + `?productId=${searchParam.get("id")}`, config)
-      console.log("-----This is the Vote Count Array-----",data)
+      const user = await axios.get(GET_MY_DETAILS + `?uid=${JSON.parse(localStorage.getItem("userCheckMyIdea")).email}`, config)
+      let hash = new Set(data)
+      if (hash.has(user.data._id.toString())) {
+        setIsUpVoted(true)
+      }
+      else {
+        setIsUpVoted(false)
+      }
       setVotes(data)
       setUpVoteLoading(false)
     }
@@ -81,11 +89,11 @@ const Idea = () => {
                 </div>
                 <div className="flex items-center justify-evenly w-[400px]" >
                   <Link to={"/my-web?name=" + item.name}><button className="w-[210px] h-[45px] border border-gray-400  hover:border-red-400 hover:cursor-pointer mr-[3px] font-semibold rounde d-lg">Visit</button></Link>
-                  {upVoteLoading ? <div>Loading...</div> : <button className="w-[210px] h-[45px] p-2 bg-red-500 hover:cursor-pointer font-semibold hover:bg-red-700 text-md text-white rounded-lg" onClick={async() => {
+                  {upVoteLoading ? <div>Loading...</div> : <button className={isUpVoted ? "w-[210px] h-[45px] p-2 bg-green-500 hover:cursor-pointer font-semibold hover:bg-green-700 text-md text-white rounded-lg" :"w-[210px] h-[45px] p-2 bg-red-500 hover:cursor-pointer font-semibold hover:bg-red-700 text-md text-white rounded-lg" } onClick={async () => {
                     await handleUpVote(searchParam.get("id"), JSON.parse(localStorage.getItem("userCheckMyIdea")).email)
                     setUpvoteTrigger(!upvoteTrigger)
                   }
-                  }>UPVOTE {votes.length}</button>}
+                  }>{isUpVoted ? "UPVOTED" : "UPVOTE"} {votes.length}</button>}
 
                 </div>
               </div>
