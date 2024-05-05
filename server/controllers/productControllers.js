@@ -5,7 +5,7 @@ const addMyProduct = async (req, res) => {
     const { name, logo, founder, founderMessage, shortDescription, longDescription, linkToWeb, comments, keywords, voteCount } = req.body
     const newProduct = await Product.create({
         name, logo, founder, founderMessage, shortDescription, longDescription, linkToWeb, comments, keywords, voteCount
-    }) 
+    })
     newProduct.save()
     res.json(newProduct)
 }
@@ -13,8 +13,7 @@ const getProducts = async (req, res) => {
     let skip = req.query.skip
     let newProducts;
     let products = await Product.find()
-    newProducts = products.slice(0,skip+3)
-    // console.log(newProducts,newProducts.length)
+    newProducts = products.slice(0, skip + 3)
     res.json(newProducts)
 }
 const getSingleProduct = async (req, res) => {
@@ -25,14 +24,15 @@ const getSingleProduct = async (req, res) => {
     if (await redisClient.GET(`productId-${id}`)) {
         const productObj = await redisClient.GET(`productId-${id}`)
         res.json(JSON.parse(productObj))
-        // console.log("Redis Call!!!")
+        console.log("This is redis call.")
     }
     else {
         const product = await Product.findOne({ _id: id })
         if (product) {
-            // console.log("Database Call!!!")
+
             await redisClient.SET(`productId-${id}`, JSON.stringify(product))
             res.json(product)
+            console.log("This is database call.")
         }
         else {
             res.json({ message: 'No Product exists with this ID' })
@@ -42,23 +42,48 @@ const getSingleProduct = async (req, res) => {
 }
 const handleUpVote = async (req, res) => {
     const { productId, user } = req.body
-    const newUser = await User.findOne({ email: user })
-    const votes = await Product.findOne({ _id: productId })
-    // console.log(votes)
-    const hash = new Set(votes.voteCount)
-    const userId = newUser._id.toString()
-    if (hash.has(userId)) {
-        hash.delete(userId)
-        let newVotes = Array.from(hash)
-        const updatedProduct = await Product.findByIdAndUpdate({ _id: productId }, { voteCount: newVotes })
-        res.json(updatedProduct)
+    const userDetails = await User.findOne({ email: user })
+    const product = await Product.findOne({ _id: productId })
+    const userInVoteCountSet = new Set(product.voteCount)
+    let votes = [];
+    let redisClient = client.createClient({})
+    redisClient.on('error', (err) => console.log("Redis Client Error"))
+    await redisClient.connect()
+    if (userInVoteCountSet.has(userDetails._id.toString())) {
+        userInVoteCountSet.delete(userDetails._id.toString())
+        userInVoteCountSet.forEach((voters) => votes.push(voters))
+        let productObj = await redisClient.GET(`productId-${productId}`)
+        let productObjJSON = JSON.parse(productObj)
+        productObjJSON.voteCount = votes
+        await redisClient.SET(`productId-${productId}`, JSON.stringify(productObjJSON))
+        await Product.updateOne({ _id: productId }, { voteCount: votes })
     }
     else {
-        const updatedProduct = await Product.findByIdAndUpdate({ _id: productId }, { voteCount: [...votes.voteCount, userId] })
-        res.json(updatedProduct)
+        let productObj = await redisClient.GET(`productId-${productId}`)
+        votes = [...product.voteCount, userDetails._id.toString()]
+        let productObjJSON = JSON.parse(productObj)
+        productObjJSON.voteCount = votes
+        await redisClient.SET(`productId-${productId}`, JSON.stringify(productObjJSON))
+        await Product.updateOne({ _id: productId }, { voteCount: votes })
     }
+    res.json(votes)
+}
+const getUpVoteCount = async (req, res) => {
+    const productId = req.query.productId
+    let redisClient = client.createClient({})
+    redisClient.on('error', (err) => console.log("Redis Client Error"))
+    await redisClient.connect()
+    let product;
+    if(await redisClient.GET(`productId-${productId}`)){
+        let productJSON = await redisClient.GET(`productId-${productId}`)
+        product = JSON.parse(productJSON)
+    }
+    else{
+        product = await Product.findOne({ _id: productId })
+    }
+    res.json(product.voteCount)
 }
 
-module.exports = { addMyProduct, getProducts, getSingleProduct, handleUpVote }
+module.exports = { addMyProduct, getProducts, getSingleProduct, handleUpVote, getUpVoteCount }
 
 // 174ms
