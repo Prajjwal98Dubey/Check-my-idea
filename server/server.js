@@ -5,6 +5,7 @@ const express = require('express')
 const userRouter = require('./routes/userRoute')
 const commentRouter = require('./routes/commentRoutes')
 const blogRouter = require('./routes/blogRoutes')
+const searchRouter = require('./config/searchHelper')
 const app = express()
 
 
@@ -16,6 +17,7 @@ app.use('/api/v1/product',productRouter)
 app.use('/api/v1/user',userRouter)
 app.use('/api/v1/comment',commentRouter)
 app.use('/api/v1/blogs',blogRouter)
+app.use('/api/v1/search',searchRouter)
 
 
 const startServer = async()=>{
