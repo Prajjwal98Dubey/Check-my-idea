@@ -6,6 +6,7 @@ const userRouter = require('./routes/userRoute')
 const commentRouter = require('./routes/commentRoutes')
 const blogRouter = require('./routes/blogRoutes')
 const searchRouter = require('./config/searchHelper')
+const historyRouter = require('./config/searchHistory')
 const app = express()
 
 
@@ -18,6 +19,8 @@ app.use('/api/v1/user',userRouter)
 app.use('/api/v1/comment',commentRouter)
 app.use('/api/v1/blogs',blogRouter)
 app.use('/api/v1/search',searchRouter)
+app.use('/api/v1/search-history',historyRouter)
+
 
 
 const startServer = async()=>{
