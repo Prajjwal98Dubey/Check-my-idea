@@ -73,10 +73,6 @@ const Navbar = () => {
                             {
                                 !isLoading &&
                                 <>
-                                    {/* {!userHistoryLoading && searchBarModal && userHistoryResult && userHistoryResult.map((item,index)=>(
-                <>
-                <Link key={index} to={"/idea?id=" + item._id}><li className='p-1 font-semibold hover:bg-gray-400 hover:cursor-pointer m-1 rounded-lg text-blue-600' onClick={() => handleUserSearchHistory(item._id)}>{item.name}</li></Link></>
-            ))} */}
                                     {searchResult.users && searchResult.users.map((search, index) => (
                                         <>
                                             <Link key={index} to={"/user-profile?uid=" + search.email}>

@@ -9,20 +9,20 @@ import {Link} from 'react-router-dom'
 import { handleUpVote } from "../helpers/helperfunc"
 const MainProductShimmer = lazy(()=>import("../shimmers/MainProductShimmer"))
 
-const ProductDisplay = ({skip}) => {
+const ProductDisplay = () => {
     const [products, setProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const newProductContext = useContext(ProductContext)
     const getProducts = async () => {
-        console.log(GET_ALL_PRODUCT+ `?skip=${skip}`)
-        const { data } = await axios.get(GET_ALL_PRODUCT+ `?skip=${skip}`, config)
+        // console.log(GET_ALL_PRODUCT+ `?skip=${skip}`)
+        const { data } = await axios.get(GET_ALL_PRODUCT, config)
         setProducts(data)
         setIsLoading(false)
         newProductContext.setMainProducts(data)
     }
     useEffect(() => {
         getProducts()
-    }, [skip])
+    }, [])
     return (
         <>
             {isLoading ? 

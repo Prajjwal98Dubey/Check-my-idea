@@ -9,12 +9,23 @@ const addMyProduct = async (req, res) => {
     newProduct.save()
     res.json(newProduct)
 }
+/// redis key ->  "allProductKey"
 const getProducts = async (req, res) => {
-    let skip = req.query.skip
-    let newProducts;
-    let products = await Product.find()
-    newProducts = products.slice(0, skip + 3)
-    res.json(newProducts)
+    const redisClient = client.createClient({})
+    await redisClient.connect()
+    const allProductKey = await redisClient.GET("allProductKey")
+    let response;
+    if(allProductKey){
+        response = JSON.parse(allProductKey);
+        console.log("Redis Call!!!")
+    }
+    else{
+        let products = await Product.find()
+        await redisClient.SETEX("allProductKey",300,JSON.stringify(products))
+        console.log("DB call!!!")
+        response=products
+    }
+    res.json(response)
 }
 const getSingleProduct = async (req, res) => {
     const { id } = req.params
@@ -36,7 +47,6 @@ const getSingleProduct = async (req, res) => {
             res.json({ message: 'No Product exists with this ID' })
         }
     }
-
 }
 const handleUpVote = async (req, res) => {
     const { productId, user } = req.body

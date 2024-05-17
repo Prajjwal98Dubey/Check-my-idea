@@ -37,11 +37,11 @@ const UserProfile = () => {
     setTriggerMount(!triggerMount)
   }
   return (
-    <>
+    <div onClick={()=>productContext.setSearchBarModal(false)}>
       {isloading ? <div>Loading...</div> :
         <>
           <Navbar />
-          <div className="flex justify-center mt-2" onClick={()=>productContext.setSearchBarModal(false)}>
+          <div className="flex justify-center mt-2" >
             <div>
               <img src="https://t3.ftcdn.net/jpg/03/58/90/78/360_F_358907879_Vdu96gF4XVhjCZxN2kCG0THTsSQi8IhT.jpg" alt="loading" loading="lazy" className="w-[170px] h-[170px] rounded-full" />
               <div className="mt-2 text-center">{user.email}</div>
@@ -56,7 +56,7 @@ const UserProfile = () => {
           <div className="flex justify-center">{!isFollowing ? <button className="w-[150px] h-[30px] bg-green-500 text-center font-bold text-white rounded-lg p-1 text-[15px] hover:bg-green-600 mt-1" onClick={() => handleAddFollower()}> + Follow</button> : <button className="w-[150px] h-[30px] bg-purple-500 text-center font-bold text-white rounded-lg p-1 text-[15px] hover:bg-purple-600 mt-1" onClick={() => handleAddFollower()}> ✓ Following</button>}</div>
         </>
       }
-    </>
+    </div>
   )
 }
 
