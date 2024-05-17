@@ -1,10 +1,11 @@
 // import React from 'react'
-import { useState } from "react"
+import { useContext, useState } from "react"
 // import Navbar from "../components/Navbar"
 import axios from "axios"
 import { ADD_MY_PRODUCT, CLOUD_NAME, UPLOAD_PRESET } from "../helpers/backendapi"
 import { config } from "../helpers/config"
 import { lazy,Suspense } from "react"
+import { ProductContext } from "../contexts/productContexts"
 const Navbar = lazy(()=>import("../components/Navbar"))
 const MyIdea = () => {
     const [name, setName] = useState("")
@@ -16,6 +17,7 @@ const MyIdea = () => {
     const [showUploader, setShowUploader] = useState(false)
     const [longDesc, setLongDesc] = useState("")
     const [founderMessage, setFounderMessage] = useState("")
+    const productContext = useContext(ProductContext)
     const handleSubmitForm = async (e) => {
         e.preventDefault()
         if (!name || !shortDesc || !logo || !keywords) {
@@ -58,7 +60,7 @@ const MyIdea = () => {
     return (
         <>
             <Suspense fallback={<h2>Loading...</h2>}><Navbar /></Suspense>
-            <div className="flex justify-center mt-[15px] font-Custom">
+            <div className="flex justify-center mt-[15px] font-Custom" onClick={()=>productContext.setSearchBarModal(false)}>
                 <form>
                     <label htmlFor="name">Name of the Startup</label>
                     <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Telsa" className=" m-1 w-[450px] h-[45px] border border-gray-500 p-1 pl-2 rounded-lg" />

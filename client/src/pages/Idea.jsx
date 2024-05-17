@@ -9,6 +9,8 @@ import { handleUpVote } from "../helpers/helperfunc"
 // import CommentShimmer from "../shimmers/CommentShimmer"
 // import IdeaShimmer from "../shimmers/IdeaShimmer"
 import { lazy, Suspense } from 'react'
+import { useContext } from "react"
+import { ProductContext } from "../contexts/productContexts"
 
 const Navbar = lazy(() => import("../components/Navbar"))
 const Comments = lazy(() => import("../components/Comments"))
@@ -28,6 +30,7 @@ const Idea = () => {
   const [votes, setVotes] = useState([])
   const [upVoteLoading, setUpVoteLoading] = useState(true)
   const [isUpVoted, setIsUpVoted] = useState(false)
+  const productContext = useContext(ProductContext)
   const singleProductRef = useRef(false)
   useEffect(() => {
     if (singleProductRef.current) return
@@ -76,7 +79,8 @@ const Idea = () => {
   return (
     <>
       <Suspense fallback={<h2>Loading...</h2>}><Navbar /></Suspense>
-      <div className="flex justify-center mt-[10px]">
+      {console.log("This is the Context",productContext)}
+      <div className="flex justify-center mt-[10px]" onClick={()=>productContext.setSearchBarModal(false)}>
         <div className="w-[1000px]">
           {isLoading ? <Suspense fallback={<h2>Loading...</h2>}><IdeaShimmer /></Suspense> :
             <>
@@ -109,7 +113,7 @@ const Idea = () => {
                 </div>
               </div>
               <Link to={`/user-profile?uid=${item.founder}`}><div className="m-2">
-                <div className="font-semibold">Creator - <span className="text-blue-700 hover:underline hover:cursor-pointer">{item.founder}</span></div>
+                <div className="font-semibold" onClick={()=>productContext.setSearchBarModal(false)}>Creator - <span className="text-blue-700 hover:underline hover:cursor-pointer">{item.founder}</span></div>
               </div></Link>
               <div className="m-2 font-Custom">
                 <div className="text-gray-800 text-xl">Express Your Opinion</div>

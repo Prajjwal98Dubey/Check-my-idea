@@ -1,15 +1,17 @@
 import axios from "axios"
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { ADD_FOLLOWER, GET_USER } from "../helpers/backendapi"
 import { config } from "../helpers/config"
 import Navbar from "../components/Navbar"
+import { ProductContext } from "../contexts/productContexts"
 const UserProfile = () => {
   const [searchParam] = useSearchParams()
   const [isloading, setIsLoading] = useState(true)
   const [user, setUser] = useState({})
   const [triggerMount, setTriggerMount] = useState(false)
   const [isFollowing, setIsFollowing] = useState(false)
+  const productContext = useContext(ProductContext)
   const getUserRef = useRef(true)
   useEffect(() => {
     const getUser = async () => {
@@ -36,11 +38,10 @@ const UserProfile = () => {
   }
   return (
     <>
-      { }
       {isloading ? <div>Loading...</div> :
         <>
           <Navbar />
-          <div className="flex justify-center mt-2">
+          <div className="flex justify-center mt-2" onClick={()=>productContext.setSearchBarModal(false)}>
             <div>
               <img src="https://t3.ftcdn.net/jpg/03/58/90/78/360_F_358907879_Vdu96gF4XVhjCZxN2kCG0THTsSQi8IhT.jpg" alt="loading" loading="lazy" className="w-[170px] h-[170px] rounded-full" />
               <div className="mt-2 text-center">{user.email}</div>

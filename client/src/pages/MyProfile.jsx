@@ -2,11 +2,12 @@ import { useNavigate } from "react-router"
 // import Navbar from "../components/Navbar"
 // import MyBlog from "../components/MyBlog"
 // import MyBlogDisplay from "../components/MyBlogDisplay"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { lazy, Suspense } from "react"
 import axios from "axios"
 import { GET_MY_DETAILS } from "../helpers/backendapi"
 import { config } from "../helpers/config"
+import { ProductContext } from "../contexts/productContexts"
 
 const Navbar = lazy(() => import("../components/Navbar"))
 const MyBlog = lazy(() => import("../components/MyBlog"))
@@ -16,6 +17,7 @@ const MyProfile = () => {
   const [newBlogMount, setNewBlogMount] = useState(false)
   const [user, setUser] = useState({})
   const [isLoading, setIsLoading] = useState(true)
+  const productContext = useContext(ProductContext)
   const handleUserLogout = () => {
     localStorage.removeItem("userCheckMyIdea")
     navigate('/')
@@ -28,12 +30,13 @@ const MyProfile = () => {
       setIsLoading(false)
     }
     getMyDetails()
+
   }, [])
   return (
     <>
     {console.log(user)}
       <Suspense fallback={<h2>Loading...</h2>}><Navbar /></Suspense>
-      <div className="flex justify-center mt-2">
+      <div className="flex justify-center mt-2" onClick={()=>productContext.setSearchBarModal(false)}>
         <div>
           <img src="https://t3.ftcdn.net/jpg/03/58/90/78/360_F_358907879_Vdu96gF4XVhjCZxN2kCG0THTsSQi8IhT.jpg" alt="loading" loading="lazy" className="w-[170px] h-[170px] rounded-full" />
           <div className="mt-2 text-center">{JSON.parse(localStorage.getItem("userCheckMyIdea")).email}</div>
