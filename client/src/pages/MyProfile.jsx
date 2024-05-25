@@ -20,6 +20,7 @@ const MyProfile = () => {
   const productContext = useContext(ProductContext)
   const handleUserLogout = () => {
     localStorage.removeItem("userCheckMyIdea")
+    localStorage.removeItem("IdeaBoxSenderDetails")
     navigate('/')
     return
   }

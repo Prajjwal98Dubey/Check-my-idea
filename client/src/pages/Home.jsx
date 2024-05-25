@@ -3,8 +3,10 @@
 // import Navbar from "../components/Navbar"
 // import ProductDisplay from "../components/ProductDisplay"
 
-import { lazy,Suspense, useContext } from "react"
+import { lazy,Suspense, useContext, useEffect } from "react"
 import { ProductContext } from "../contexts/productContexts"
+import axios from "axios"
+import { GET_SENDER_ID } from "../helpers/backendapi"
 const ProductDisplay = lazy(()=>import("../components/ProductDisplay"))
 const Navbar = lazy(()=>import("../components/Navbar"))
 const MainBlogsPage = lazy(()=>import("../components/MainBlogsPage"))
@@ -12,6 +14,13 @@ const MainBlogsPage = lazy(()=>import("../components/MainBlogsPage"))
 const Home = () => {
   // const[skip,setSkip] = useState(0)
   const productContext = useContext(ProductContext)
+  useEffect(()=>{
+    const addSenderDetails = async()=>{
+       const {data} =  await axios.get(GET_SENDER_ID+`?sEmail=${JSON.parse(localStorage.getItem("userCheckMyIdea")).email}`)
+      localStorage.setItem("IdeaBoxSenderDetails",JSON.stringify(data.sender))
+    }
+    if (localStorage.getItem("userCheckMyIdea")) addSenderDetails()
+  },[])
   return (
     <>
     <Suspense fallback={<h2>Loading...</h2>}><Navbar/></Suspense>

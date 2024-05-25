@@ -17,12 +17,10 @@ const getProducts = async (req, res) => {
     let response;
     if(allProductKey){
         response = JSON.parse(allProductKey);
-        console.log("Redis Call!!!")
     }
     else{
         let products = await Product.find()
         await redisClient.SETEX("allProductKey",300,JSON.stringify(products))
-        console.log("DB call!!!")
         response=products
     }
     res.json(response)

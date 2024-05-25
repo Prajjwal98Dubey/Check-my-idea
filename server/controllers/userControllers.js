@@ -82,4 +82,9 @@ const addFollower = async (req, res) => {
     }
     res.json({ followeeResponse, followerResponse, followerIsFollowing })
 }
-module.exports = { addNewUser, getUser, addFollower ,getMyDetails}
+const getSenderUserId = async(req,res)=>{
+    const sEmail = req.query.sEmail;
+    const senderData = await User.findOne({email:sEmail});
+    res.json({sender:senderData._id})
+}
+module.exports = { addNewUser, getUser, addFollower ,getMyDetails,getSenderUserId}
