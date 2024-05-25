@@ -70,7 +70,7 @@ const UserProfile = () => {
           <div className="flex justify-center">{!isFollowing ? <button className="w-[150px] h-[30px] bg-green-500 text-center font-bold text-white rounded-lg p-1 text-[15px] hover:bg-green-600 mt-1" onClick={() => handleAddFollower()}> + Follow</button> : <button className="w-[150px] h-[30px] bg-purple-500 text-center font-bold text-white rounded-lg p-1 text-[15px] hover:bg-purple-600 mt-1" onClick={() => handleAddFollower()}> ✓ Following</button>}</div>
 
 
-            <div className='font-Afacad w-[300px] h-[50px] fixed right-0 bottom-0 bg-black text-white font-bold text-xl flex justify-center items-center rounded-l-md cursor-pointer' onClick={()=>setOpenChat(true)}>Chat with </div>
+            <div className='font-Afacad w-[300px] h-[50px] fixed right-0 bottom-0 bg-black text-white font-bold text-xl flex justify-center items-center rounded-l-md cursor-pointer' onClick={()=>setOpenChat(true)}>Chat with Founder </div>
             {openChat && <div className='rounded-lg fixed z-10 right-0 bottom-0 w-[550px] h-[350px] bg-black text-white font-bold text-xl p-2'>
               <div className='flex justify-end'>
                 <div className="cursor-pointer" onClick={() => {

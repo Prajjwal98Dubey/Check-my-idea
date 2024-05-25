@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react"
 // import { useSearchParams } from "react-router-dom"
 import { io } from 'socket.io-client'
-import { ADD_CHAT_MESSAGE, GET_DB_CHATS } from "../helpers/backendapi";
+import { ADD_CHAT_MESSAGE, GET_DB_CHATS, LOADER_IMG_ICON } from "../helpers/backendapi";
 import { config } from "../helpers/config";
 // import { useState } from "react"
 const socket = io.connect("http://localhost:3001")
@@ -95,6 +95,7 @@ const Chat = ({ chatUniqueId, reciever }) => {
             })
             setOldChats(data)
             setIsLoading(false)
+            
         }
         if (sendEmailRef.current) {
             sendEmailThroughSocket()
@@ -116,7 +117,7 @@ const Chat = ({ chatUniqueId, reciever }) => {
     return (
         <>
             <div className='h-[250px] overflow-y-scroll mb-[20px]'>
-                {isLoading ? <div></div> :
+                {isLoading ? <div className=" flex justify-center"><img src={LOADER_IMG_ICON} className="w-[75px] h-[75px] rounded-full animate-ping items-center mt-[110px]" alt="loading" /></div> :
                     <div className=''>
                         {oldChats && oldChats.map((c, i) =>
                             (c.senderId === JSON.parse(localStorage.getItem("IdeaBoxSenderDetails")) ? <div key={i} className='w-full flex justify-end'><div className='w-fit h-fit border border-white text-sm p-1 rounded-md mr-[4px] mt-[6px] mb-[6px] bg-green-400 text-black rounded-tr-xl'>{c.message}</div></div> : <div key={i} className=' flex justify-start w-fit h-fit border border-white text-sm p-1 rounded-md ml-[4px] mt-[6px] mb-[6px] bg-slate-300 text-black rounded-tl-xl'>{c.message}</div>)
@@ -131,7 +132,7 @@ const Chat = ({ chatUniqueId, reciever }) => {
                     </div>
                 }
             </div>
-            <div className="font-Custom flex justify-center ">
+            { !isLoading && <div className="font-Custom flex justify-center ">
                 <div className="fixed bottom-2">
                     <input type="text" className="w-[400px] h-[35px] rounded-l-md  text-black" value={message} onChange={(e) => setMessage(e.target.value)} />
                     <span><button className="w-[100px] h-[35px] bg-green-500 hover:bg-green-700  cursor-pointer text-white font-bold rounded-r-md" onClick={() => {
@@ -139,7 +140,7 @@ const Chat = ({ chatUniqueId, reciever }) => {
                     
                     }}>send</button></span>
                 </div>
-            </div>
+            </div>}
         </>
     )
 }

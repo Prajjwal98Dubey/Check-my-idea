@@ -9,7 +9,7 @@ const io = new Server(server,{
 })
 let flag = new Map();  
 /*
-if we are taking only time as the key then, if there are more than 2 conversaation happening which means 4 people in pairs are talking then if two people hit the send btn at the same time then only one key will be set in the map and other message will not.
+if we are taking only time as the key then, if there are more than 2 conversation happening which means 4 people in pairs are talking then if two people hit the send btn at the same time then only one key will be set in the map and other message will not.
 */
 
 io.on('connection',(socket)=>{
