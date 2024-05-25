@@ -74,6 +74,7 @@ const Chat = ({ chatUniqueId, reciever }) => {
     const [oldChats, setOldChats] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const sendEmailRef = useRef(true)
+
     useEffect(() => {
         const recieveChats = () => {
             socket.on(`chat-${chatUniqueId}`, (payload) => {
@@ -82,15 +83,14 @@ const Chat = ({ chatUniqueId, reciever }) => {
         }
         recieveChats()
     })
-
     useEffect(() => {
         const sendEmailThroughSocket = () => {
             socket.emit('sendEmail', { sEmail: JSON.parse(localStorage.getItem("userCheckMyIdea")).email, rEmail: reciever })
         }
-        const handleOldChats = async()=>{
-            const {data} = await axios.get(GET_DB_CHATS + `?chatid=${chatUniqueId}`,{
-                headers:{
-                    "Content-Type":"application/json"
+        const handleOldChats = async () => {
+            const { data } = await axios.get(GET_DB_CHATS + `?chatid=${chatUniqueId}`, {
+                headers: {
+                    "Content-Type": "application/json"
                 }
             })
             setOldChats(data)
@@ -103,20 +103,16 @@ const Chat = ({ chatUniqueId, reciever }) => {
         handleOldChats()
 
     }, [chatUniqueId, reciever])
-    const sendMessage = () => {
-        socket.emit(`chat-${chatUniqueId}`, { message, user: JSON.parse(localStorage.getItem("userCheckMyIdea")).email })
-        setMessage("")
-    }
-    
-    const handleMessageSave = async () => {
+    const sendMessageAndAddMessageToDB = async () => {
+        await socket.emit(`chat-${chatUniqueId}`, { message, user: JSON.parse(localStorage.getItem("userCheckMyIdea")).email,time:Date.now()})
         await axios.post(ADD_CHAT_MESSAGE, {
             sEmail: JSON.parse(localStorage.getItem("userCheckMyIdea")).email,
             rEmail: reciever,
             chatUniqueId: chatUniqueId,
-            message:message
+            message: message
         }, config)
+        setMessage("")
     }
-    
     return (
         <>
             <div className='h-[250px] overflow-y-scroll mb-[20px]'>
@@ -139,8 +135,8 @@ const Chat = ({ chatUniqueId, reciever }) => {
                 <div className="fixed bottom-2">
                     <input type="text" className="w-[400px] h-[35px] rounded-l-md  text-black" value={message} onChange={(e) => setMessage(e.target.value)} />
                     <span><button className="w-[100px] h-[35px] bg-green-500 hover:bg-green-700  cursor-pointer text-white font-bold rounded-r-md" onClick={() => {
-                        sendMessage()
-                        handleMessageSave()
+                        sendMessageAndAddMessageToDB()
+                    
                     }}>send</button></span>
                 </div>
             </div>

@@ -7,10 +7,14 @@ const io = new Server(server,{
         origin:"*"
     }
 })
+let flag = new Map();  
+/*
+if we are taking only time as the key then, if there are more than 2 conversaation happening which means 4 people in pairs are talking then if two people hit the send btn at the same time then only one key will be set in the map and other message will not.
+*/
 
 io.on('connection',(socket)=>{
     let uniqueId;
-    console.log("Socket Connected...",socket.id)
+    // console.log("Socket Connected...",socket.id)
     socket.on('sendEmail',(emails)=>{
         const {sEmail,rEmail} = emails
         let uniqueIdList = [sEmail, rEmail];
@@ -18,7 +22,12 @@ io.on('connection',(socket)=>{
         uniqueId = uniqueIdList[0] + "-" + uniqueIdList[1];
         socket.join(`room-${uniqueId}`)
         socket.on(`chat-${uniqueId}`,(payload)=>{
-            io.to(`room-${uniqueId}`).emit(`chat-${uniqueId}`,payload)
+                if(!flag.has(payload.time.toString() + `-${uniqueId}`))
+                    {
+                        io.to(`room-${uniqueId}`).emit(`chat-${uniqueId}`,payload)
+                        flag.set(payload.time.toString() + `-${uniqueId}`,1);
+                    }
+                console.log(flag)
         })
 
     })
