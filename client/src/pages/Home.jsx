@@ -24,9 +24,6 @@ const Home = () => {
   return (
     <>
     <Suspense fallback={<h2>Loading...</h2>}><Navbar/></Suspense>
-    {console.log("Home Page",productContext.searchBarModal)}
-    {/* {console.log("complete product context",productContext)}
-    {console.log("product context",productContext.se)} */}
 
     <div className="flex" onClick={()=>productContext.setSearchBarModal(false)}>
     <div className="w-1/2 ml-[60px] mt-[20px] h-full">

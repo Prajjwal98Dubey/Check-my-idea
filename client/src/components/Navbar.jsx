@@ -49,14 +49,12 @@ const Navbar = () => {
     }
     return (
         <>
-            {console.log("this is the context in the navbar",productContext)}
             <div className="h-[65px] bg-[#8d48c2] flex justify-around items-center font-Custom">
                 <Link to='/'><div className="font-Cursive font-bold text-white text-xl p-2 min-w-fit min-h-min hover:underline" onClick={()=>productContext.setSearchBarModal(false)}>check-my-idea</div></Link>
                 <div className='z-10 flex justify-center m-1 relative'>
                     <img src={SEARCH_BAR_ICON} alt="loading" loading='lazy' className='w-[24px] h-[24px] absolute right-1 top-[7px]' />
                     <input type="text" className='w-[450px] h-[38px] mt-[3px] rounded-lg border border-blue-700 p-2' value={searchText} onClick={() => {
                         productContext.setSearchBarModal(true)
-                        console.log("Clicked in the input.")
                     }
                     } onChange={(e) => {
                         setSearchText(e.target.value)

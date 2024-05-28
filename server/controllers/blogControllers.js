@@ -12,15 +12,20 @@ const createBlog = async (req, res) => {
         res.json(error)
     }
 }
+
 const getAllBlogs = async(req,res)=>{
+    let skip = req.query.skip;
+    skip = parseInt(skip);
+    let blogLeft = true;
     const allBlogs = await Blog.find({})
-    let reponse=[]
-    for(let i=0;i<allBlogs.length;i++){
-        let obj = {}
-        let user = await User.findOne({_id:allBlogs[i].author})
-        reponse.push({user:user,blog:allBlogs[i]})
+    if (skip+5 >= allBlogs.length) blogLeft = false;
+    let responseBlogs = allBlogs.slice(skip,skip+5<=allBlogs.length ? skip+5 : allBlogs.length)
+    let finalBlogs = []
+    for(let i=0;i<responseBlogs.length;i++){
+        let user = await User.findOne({_id:allBlogs[i].author});
+        finalBlogs.push({user:user,blog:allBlogs[i]})
     }
-    res.json(reponse)
+    res.json({finalBlogs,blogLeft})
 }
 const getMyBlogs =async(req,res)=>{
     const userEmail = req.query.id

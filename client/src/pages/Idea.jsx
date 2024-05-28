@@ -1,13 +1,10 @@
 import { useEffect, useRef, useState } from "react"
-// import Navbar from "../components/Navbar"
 import { useSearchParams, Link } from "react-router-dom"
 import axios from "axios"
 import { ADD_NEW_COMMENT, GET_ALL_COMMENTS, GET_MY_DETAILS, GET_SINGLE_PRODUCT, GET_UPVOTE_COUNT } from "../helpers/backendapi"
 import { config } from "../helpers/config"
-// import Comments from "../components/Comments"
+
 import { handleUpVote } from "../helpers/helperfunc"
-// import CommentShimmer from "../shimmers/CommentShimmer"
-// import IdeaShimmer from "../shimmers/IdeaShimmer"
 import { lazy, Suspense } from 'react'
 import { useContext } from "react"
 import { ProductContext } from "../contexts/productContexts"
@@ -30,6 +27,8 @@ const Idea = () => {
   const [votes, setVotes] = useState([])
   const [upVoteLoading, setUpVoteLoading] = useState(true)
   const [isUpVoted, setIsUpVoted] = useState(false)
+  const[skip,setSkip] = useState(0)
+  const[commentLeft,setCommentLeft] = useState(true)
   const productContext = useContext(ProductContext)
   const singleProductRef = useRef(false)
   useEffect(() => {
@@ -45,12 +44,14 @@ const Idea = () => {
   useEffect(() => {
     const getAllComments = async () => {
       setLoadComments(true)
-      const { data } = await axios.get(GET_ALL_COMMENTS + searchParam.get("id"), config)
-      setAllComments(data)
+      const { data } = await axios.get(GET_ALL_COMMENTS + `?productId=${searchParam.get("id")}&skip=${skip}`, config)
+      const {finalAllComments , commentLeft} = data
+      setAllComments([...allcomments,...finalAllComments])
+      setCommentLeft(commentLeft)
       setLoadComments(false)
     }
     getAllComments()
-  }, [searchParam, triggerMount])
+  }, [searchParam, triggerMount, skip])
   useEffect(() => {
     const getUpVoteCount = async () => {
       const { data } = await axios.get(GET_UPVOTE_COUNT + `?productId=${searchParam.get("id")}`, config)
@@ -84,7 +85,6 @@ const Idea = () => {
         <div className="w-[1000px]">
           {isLoading ? <Suspense fallback={<h2>Loading...</h2>}><IdeaShimmer /></Suspense> :
             <>
-              {/* {console.log(item)} */}
               <div className="font-Custom flex justify-between">
                 <div>
                   <div><img src={item.logo} className="w-[120px] h-[80px] rounded-lg border border-gray-300 m-2" alt="loading" loading="lazy" /></div>
@@ -139,7 +139,9 @@ const Idea = () => {
                 }
                 {loadComments ? <Suspense fallback={<h2>Loading...</h2>}><CommentShimmer /></Suspense> :
                   <>
-                    <div className="m-1"><Suspense fallback={<h2>Loading...</h2>}><Comments commentlist={allcomments} /></Suspense></div></>}
+                    <div className="m-1"><Suspense fallback={<h2>Loading...</h2>}><Comments commentlist={allcomments} />
+                      {!isLoading && commentLeft && <div className="flex justify-center"><button className="w-[200px] h-[35px] bg-[#313131] hover:bg-gray-800 text-center text-white font-semibold rounded-md" onClick={()=>setSkip(skip+5)}>Load More...</button></div>}
+                    </Suspense></div></>}
               </div>
             </>
           }

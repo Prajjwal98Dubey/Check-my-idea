@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Suspense, lazy, useContext, useEffect, useState } from "react"
-import { GET_ALL_PRODUCT } from "../helpers/backendapi"
+import {  GET_ALL_PRODUCT_INSTANT } from "../helpers/backendapi"
 import { config } from "../helpers/config"
 import axios from "axios"
 import { COMMENT_ICON, FULL_STOP, UPVOTE_ICON_IMG } from "../helpers/icons"
@@ -12,22 +12,25 @@ const MainProductShimmer = lazy(()=>import("../shimmers/MainProductShimmer"))
 const ProductDisplay = () => {
     const [products, setProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [skip,setSkip] = useState(0)
+    const[productLeft,setProductLeft] = useState(true)
     const newProductContext = useContext(ProductContext)
     const getProducts = async () => {
-        // console.log(GET_ALL_PRODUCT+ `?skip=${skip}`)
-        const { data } = await axios.get(GET_ALL_PRODUCT, config)
-        setProducts(data)
+        const {data} = await axios.get(GET_ALL_PRODUCT_INSTANT+`?skip=${skip}`, config)
+        const {items,itemLeft} = data
+        setProducts([...products,...items])
+        setProductLeft(itemLeft)
         setIsLoading(false)
-        newProductContext.setMainProducts(data)
+        newProductContext.setMainProducts([...products,...items])
     }
     useEffect(() => {
         getProducts()
-    }, [])
+    }, [skip])
     return (
         <>
             {isLoading ? 
             <Suspense fallback={<h2>Loading...</h2>}><MainProductShimmer/></Suspense> :
-                products.map((prod) => (
+                products.map((prod) =>  (
                     <div key={prod._id}>
                         <Link to={"/idea?id="+prod._id}>
                         <div  className="flex justify-between p-2 hover:bg-green-200 cursor-pointer rounded-lg font-Custom">
@@ -62,6 +65,9 @@ const ProductDisplay = () => {
 
                     </div>
                 ))
+            }
+            { !isLoading && productLeft && 
+                        <div className="p-1 m-1"><button className="w-[570px] h-[40px] text-center bg-[#313131] hover:bg-gray-800 text-white  rounded-lg font-semibold" onClick={()=>setSkip(skip+5)}>LOAD MORE...</button></div>
 
             }
         </>

@@ -89,7 +89,20 @@ const getUpVoteCount = async (req, res) => {
     }
     res.json(product.voteCount)
 }
+/*
+    GET_INSTANT_API = "http:/localhost:3001/api/v1/products?skip=0"
+*/
+const getInstantProduct=async(req,res)=>{
+    let skip = req.query.skip;
+    skip = parseInt(skip);
+    let itemLeft = true;
+    const products = await Product.find();
+    if (skip+5>=products.length) itemLeft = false
+    let responseProduct = products.slice(skip, skip+5<=products.length ? skip+5 : products.length);
+    res.json({items:responseProduct,itemLeft})
 
-module.exports = { addMyProduct, getProducts, getSingleProduct, handleUpVote, getUpVoteCount }
+}
+
+module.exports = { addMyProduct, getProducts, getSingleProduct, handleUpVote, getUpVoteCount,getInstantProduct }
 
 // 174ms

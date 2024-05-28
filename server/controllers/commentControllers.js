@@ -10,19 +10,24 @@ const addNewComment = async (req, res) => {
     })
     newComment.save()
     const productComments = await Product.findOne({ _id: productId })
-    await Product.findOneAndUpdate({ _id: productId }, { comments: [newComment._id,...productComments.comments] })
+    await Product.findOneAndUpdate({ _id: productId }, { comments: [newComment._id, ...productComments.comments] })
     res.json(newComment)
 
 }
 const getAllComments = async (req, res) => {
     const id = req.query.productId
+    let skip = req.query.skip
+    skip = parseInt(skip)
+    let commentLeft = true
     const productComments = await Comment.find({ productId: id })
-    let response = []
-    for (let i = 0; i < productComments.length; i++) {
+    if (skip + 5 >= productComments.length) commentLeft = false;
+    let finalComments = productComments.slice(skip, skip + 5 <= productComments.length ? skip + 5 : productComments.length)
+    let allComments = [];
+    for (let i = 0; i < finalComments.length; i++) {
         let userId = await User.findOne({ _id: productComments[i].user })
-        response.push({ username: userId.email, comment: productComments[i].comment })
+        allComments.push({ username: userId.email, comment: productComments[i].comment })
     }
-    res.json(response)
+    res.json({ finalAllComments:allComments, commentLeft })
 
 }
 module.exports = { addNewComment, getAllComments }
