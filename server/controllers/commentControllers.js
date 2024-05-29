@@ -15,6 +15,7 @@ const addNewComment = async (req, res) => {
 
 }
 const getAllComments = async (req, res) => {
+    /*
     const id = req.query.productId
     let skip = req.query.skip
     skip = parseInt(skip)
@@ -28,6 +29,15 @@ const getAllComments = async (req, res) => {
         allComments.push({ username: userId.email, comment: productComments[i].comment })
     }
     res.json({ finalAllComments:allComments, commentLeft })
-
+    */
+    const id = req.query.productId
+    const allComments = await Comment.find({ productId: id})
+    let responseComments = []
+    for (let i = 0; i < allComments.length; i++) {
+        let userId = await User.findOne({ _id: allComments[i].user })
+        responseComments.push({ username: userId.email, comment: allComments[i].comment })
+    }
+    responseComments.reverse()
+    res.json(responseComments)
 }
 module.exports = { addNewComment, getAllComments }

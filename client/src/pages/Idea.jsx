@@ -3,7 +3,6 @@ import { useSearchParams, Link } from "react-router-dom"
 import axios from "axios"
 import { ADD_NEW_COMMENT, GET_ALL_COMMENTS, GET_MY_DETAILS, GET_SINGLE_PRODUCT, GET_UPVOTE_COUNT } from "../helpers/backendapi"
 import { config } from "../helpers/config"
-
 import { handleUpVote } from "../helpers/helperfunc"
 import { lazy, Suspense } from 'react'
 import { useContext } from "react"
@@ -13,7 +12,6 @@ const Navbar = lazy(() => import("../components/Navbar"))
 const Comments = lazy(() => import("../components/Comments"))
 const CommentShimmer = lazy(() => import("../shimmers/CommentShimmer"))
 const IdeaShimmer = lazy(() => import("../shimmers/IdeaShimmer"))
-
 
 const Idea = () => {
   const [item, setItem] = useState([])
@@ -27,8 +25,6 @@ const Idea = () => {
   const [votes, setVotes] = useState([])
   const [upVoteLoading, setUpVoteLoading] = useState(true)
   const [isUpVoted, setIsUpVoted] = useState(false)
-  const[skip,setSkip] = useState(0)
-  const[commentLeft,setCommentLeft] = useState(true)
   const productContext = useContext(ProductContext)
   const singleProductRef = useRef(false)
   useEffect(() => {
@@ -44,14 +40,12 @@ const Idea = () => {
   useEffect(() => {
     const getAllComments = async () => {
       setLoadComments(true)
-      const { data } = await axios.get(GET_ALL_COMMENTS + `?productId=${searchParam.get("id")}&skip=${skip}`, config)
-      const {finalAllComments , commentLeft} = data
-      setAllComments([...allcomments,...finalAllComments])
-      setCommentLeft(commentLeft)
+      const { data } = await axios.get(GET_ALL_COMMENTS + `?productId=${searchParam.get("id")}`, config) 
+      setAllComments(data)
       setLoadComments(false)
     }
     getAllComments()
-  }, [searchParam, triggerMount, skip])
+  }, [searchParam, triggerMount])
   useEffect(() => {
     const getUpVoteCount = async () => {
       const { data } = await axios.get(GET_UPVOTE_COUNT + `?productId=${searchParam.get("id")}`, config)
@@ -80,8 +74,8 @@ const Idea = () => {
   return (
     <>
       <Suspense fallback={<h2>Loading...</h2>}><Navbar /></Suspense>
-      {console.log("This is the Context",productContext)}
-      <div className="flex justify-center mt-[10px]" onClick={()=>productContext.setSearchBarModal(false)}>
+      {console.log("This is the Context", productContext)}
+      <div className="flex justify-center mt-[10px]" onClick={() => productContext.setSearchBarModal(false)}>
         <div className="w-[1000px]">
           {isLoading ? <Suspense fallback={<h2>Loading...</h2>}><IdeaShimmer /></Suspense> :
             <>
@@ -93,12 +87,11 @@ const Idea = () => {
                 </div>
                 <div className="flex items-center justify-evenly w-[400px]" >
                   <Link to={"/my-web?name=" + item.name}><button className="w-[210px] h-[45px] border border-gray-400  hover:border-red-400 hover:cursor-pointer mr-[3px] font-semibold rounde d-lg">Visit</button></Link>
-                  {upVoteLoading ? <div>Loading...</div> : <button className={isUpVoted ? "w-[210px] h-[45px] p-2 bg-green-500 hover:cursor-pointer font-semibold hover:bg-green-700 text-md text-white rounded-lg" :"w-[210px] h-[45px] p-2 bg-red-500 hover:cursor-pointer font-semibold hover:bg-red-700 text-md text-white rounded-lg" } onClick={async () => {
+                  {upVoteLoading ? <div>Loading...</div> : <button className={isUpVoted ? "w-[210px] h-[45px] p-2 bg-green-500 hover:cursor-pointer font-semibold hover:bg-green-700 text-md text-white rounded-lg" : "w-[210px] h-[45px] p-2 bg-red-500 hover:cursor-pointer font-semibold hover:bg-red-700 text-md text-white rounded-lg"} onClick={async () => {
                     await handleUpVote(searchParam.get("id"), JSON.parse(localStorage.getItem("userCheckMyIdea")).email)
                     setUpvoteTrigger(!upvoteTrigger)
                   }
                   }>{isUpVoted ? "UPVOTED" : "UPVOTE"} {votes.length}</button>}
-
                 </div>
               </div>
               <div className="m-2 font-Custom">
@@ -113,7 +106,7 @@ const Idea = () => {
                 </div>
               </div>
               <Link to={`/user-profile?uid=${item.founder}`}><div className="m-2">
-                <div className="font-semibold" onClick={()=>productContext.setSearchBarModal(false)}>Creator - <span className="text-blue-700 hover:underline hover:cursor-pointer">{item.founder}</span></div>
+                <div className="font-semibold" onClick={() => productContext.setSearchBarModal(false)}>Creator - <span className="text-blue-700 hover:underline hover:cursor-pointer">{item.founder}</span></div>
               </div></Link>
               <div className="m-2 font-Custom">
                 <div className="text-gray-800 text-xl">Express Your Opinion</div>
@@ -140,8 +133,10 @@ const Idea = () => {
                 {loadComments ? <Suspense fallback={<h2>Loading...</h2>}><CommentShimmer /></Suspense> :
                   <>
                     <div className="m-1"><Suspense fallback={<h2>Loading...</h2>}><Comments commentlist={allcomments} />
-                      {!isLoading && commentLeft && <div className="flex justify-center"><button className="w-[200px] h-[35px] bg-[#313131] hover:bg-gray-800 text-center text-white font-semibold rounded-md" onClick={()=>setSkip(skip+5)}>Load More...</button></div>}
+                      {/* {!isLoading && commentLeft && <div className="flex justify-center"><button className="w-[200px] h-[35px] bg-[#313131] hover:bg-gray-800 text-center text-white font-semibold rounded-md" onClick={() => setSkip(skip + 5)}>Load More...</button></div>
+                      } */}
                     </Suspense></div></>}
+                    
               </div>
             </>
           }
