@@ -7,12 +7,10 @@ import { handleUpVote } from "../helpers/helperfunc"
 import { lazy, Suspense } from 'react'
 import { useContext } from "react"
 import { ProductContext } from "../contexts/productContexts"
-
 const Navbar = lazy(() => import("../components/Navbar"))
 const Comments = lazy(() => import("../components/Comments"))
 const CommentShimmer = lazy(() => import("../shimmers/CommentShimmer"))
 const IdeaShimmer = lazy(() => import("../shimmers/IdeaShimmer"))
-
 const Idea = () => {
   const [item, setItem] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -26,7 +24,11 @@ const Idea = () => {
   const [upVoteLoading, setUpVoteLoading] = useState(true)
   const [isUpVoted, setIsUpVoted] = useState(false)
   const productContext = useContext(ProductContext)
+  const [skip, setSkip] = useState(0)
+  const [commentLeft, setCommentLeft] = useState(true)
+  const commentRenderRef = useRef(true)
   const singleProductRef = useRef(false)
+  const renderCommentOneTime = useRef(true)
   useEffect(() => {
     if (singleProductRef.current) return
     const getSingleProduct = async () => {
@@ -39,13 +41,29 @@ const Idea = () => {
   }, [searchParam, upvoteTrigger])
   useEffect(() => {
     const getAllComments = async () => {
-      setLoadComments(true)
-      const { data } = await axios.get(GET_ALL_COMMENTS + `?productId=${searchParam.get("id")}`, config) 
-      setAllComments(data)
-      setLoadComments(false)
+      setTimeout(async()=>{
+        console.log("--------------this is the value of skip:--------", skip)
+        setLoadComments(true)
+        const { data } = await axios.get(GET_ALL_COMMENTS + `?productId=${searchParam.get("id")}&skip=${skip}`, config)
+        const { finalAllComments, commentLeft } = data
+          if (commentRenderRef.current) {
+            console.log([...allcomments, ...finalAllComments])
+            setAllComments([...allcomments, ...finalAllComments])
+          }
+          else {
+            console.log(finalAllComments)
+              setAllComments([...finalAllComments])
+            
+          }
+        setCommentLeft(commentLeft)
+        setLoadComments(false)
+
+        renderCommentOneTime.current = false
+      },250)  
     }
-    getAllComments()
-  }, [searchParam, triggerMount])
+    if (renderCommentOneTime.current) getAllComments()
+  }, [searchParam, triggerMount, skip, allcomments])
+
   useEffect(() => {
     const getUpVoteCount = async () => {
       const { data } = await axios.get(GET_UPVOTE_COUNT + `?productId=${searchParam.get("id")}`, config)
@@ -63,6 +81,9 @@ const Idea = () => {
     getUpVoteCount()
   }, [upvoteTrigger, searchParam])
   const handleCommentBtn = async () => {
+    renderCommentOneTime.current = true
+    commentRenderRef.current = false
+    setSkip(skip => skip - skip)
     await axios.post(ADD_NEW_COMMENT, {
       user: JSON.parse(localStorage.getItem("userCheckMyIdea")).email,
       comment: userComment,
@@ -74,7 +95,6 @@ const Idea = () => {
   return (
     <>
       <Suspense fallback={<h2>Loading...</h2>}><Navbar /></Suspense>
-      {console.log("This is the Context", productContext)}
       <div className="flex justify-center mt-[10px]" onClick={() => productContext.setSearchBarModal(false)}>
         <div className="w-[1000px]">
           {isLoading ? <Suspense fallback={<h2>Loading...</h2>}><IdeaShimmer /></Suspense> :
@@ -112,7 +132,7 @@ const Idea = () => {
                 <div className="text-gray-800 text-xl">Express Your Opinion</div>
                 <div className="flex font-Custom">
                   <input type="text" value={userComment} onChange={(e) => setUserComment(e.target.value)} className="w-[850px] h-[45px] border border-gray-400 p-2 font-Cursive rounded-l-lg" />
-                  <div><button className="w-[150px] h-[45px] bg-blue-500 text-white font-semibold hover:bg-blue-600 hover:cursor-pointer rounded-r-lg" onClick={handleCommentBtn}>Comment</button></div>
+                  <div><button className="w-[150px] h-[45px] bg-blue-500 text-white font-semibold hover:bg-blue-600 hover:cursor-pointer rounded-r-lg" onClick={() => handleCommentBtn()}>Comment</button></div>
                 </div>
                 {
                   item.founderMessage && <div className="bg-green-300 rounded-lg m-1">
@@ -133,10 +153,14 @@ const Idea = () => {
                 {loadComments ? <Suspense fallback={<h2>Loading...</h2>}><CommentShimmer /></Suspense> :
                   <>
                     <div className="m-1"><Suspense fallback={<h2>Loading...</h2>}><Comments commentlist={allcomments} />
-                      {/* {!isLoading && commentLeft && <div className="flex justify-center"><button className="w-[200px] h-[35px] bg-[#313131] hover:bg-gray-800 text-center text-white font-semibold rounded-md" onClick={() => setSkip(skip + 5)}>Load More...</button></div>
-                      } */}
+                      {!isLoading && commentLeft && <div className="flex justify-center"><button className="w-[200px] h-[35px] bg-[#313131] hover:bg-gray-800 text-center text-white font-semibold rounded-md" onClick={() => {
+                        setSkip(skip => skip + 5)
+                        commentRenderRef.current = true
+                        renderCommentOneTime.current = true
+                      }}>Load More...</button></div>
+                      }
                     </Suspense></div></>}
-                    
+
               </div>
             </>
           }
