@@ -30,9 +30,6 @@ const Home = () => {
         <div className="font-Custom font-semibold text-lg">Products</div>
         <Suspense fallback={<h2>Loading...</h2>}>
           <ProductDisplay />
-          {/* <div className="flex justify-center m-2">
-                <Pagination skip={skip} setSkip={setSkip}/>
-            </div> */}
           </Suspense>
     </div>    
     <div className="w-1/2 ml-[60px] mt-[20px] h-full font-Custom ">
