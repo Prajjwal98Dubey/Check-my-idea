@@ -38,6 +38,7 @@ const MainBlogsPage = () => {
     }, [skip])
     return (
         <>
+        {console.log(blogs)}
             {isLoading ? <Suspense fallback={<h2>Loading...</h2>}><MainBlogShimmer /></Suspense> :
                 <>
                     <div className="font-Custom m-2 p-1">

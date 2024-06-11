@@ -73,6 +73,7 @@ const Chat = ({ chatUniqueId, reciever }) => {
     const [chats, setChats] = useState([])
     const [oldChats, setOldChats] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [isTyping, setTyping] = useState(false)
     const sendEmailRef = useRef(true)
 
     useEffect(() => {
@@ -95,7 +96,7 @@ const Chat = ({ chatUniqueId, reciever }) => {
             })
             setOldChats(data)
             setIsLoading(false)
-            
+
         }
         if (sendEmailRef.current) {
             sendEmailThroughSocket()
@@ -105,7 +106,7 @@ const Chat = ({ chatUniqueId, reciever }) => {
 
     }, [chatUniqueId, reciever])
     const sendMessageAndAddMessageToDB = async () => {
-        await socket.emit(`chat-${chatUniqueId}`, { message, user: JSON.parse(localStorage.getItem("userCheckMyIdea")).email,time:Date.now()})
+        await socket.emit(`chat-${chatUniqueId}`, { message, user: JSON.parse(localStorage.getItem("userCheckMyIdea")).email, time: Date.now() })
         await axios.post(ADD_CHAT_MESSAGE, {
             sEmail: JSON.parse(localStorage.getItem("userCheckMyIdea")).email,
             rEmail: reciever,
@@ -113,7 +114,15 @@ const Chat = ({ chatUniqueId, reciever }) => {
             message: message
         }, config)
         setMessage("")
+        socket.emit('sender-typing', { payload: 0, senderEmail: JSON.parse(localStorage.getItem("userCheckMyIdea")).email })
+
     }
+    useEffect(() => {
+        socket.on('sender-typing', (payload) => {
+            if (payload.payload >= 1 && payload.senderEmail !== JSON.parse(localStorage.getItem("userCheckMyIdea")).email) setTyping(true)
+            else setTyping(false)
+        })
+    }, [message])
     return (
         <>
             <div className='h-[250px] overflow-y-scroll mb-[20px]'>
@@ -132,12 +141,16 @@ const Chat = ({ chatUniqueId, reciever }) => {
                     </div>
                 }
             </div>
-            { !isLoading && <div className="font-Custom flex justify-center ">
+            {!isLoading && <div className="font-Custom flex justify-center ">
                 <div className="fixed bottom-2">
-                    <input type="text" className="w-[400px] h-[35px] rounded-l-md  text-black" value={message} onChange={(e) => setMessage(e.target.value)} />
+                    {isTyping && <div className="text-yellow-400 ">typing....</div>}
+                    <input type="text" className="w-[400px] h-[35px] rounded-l-md  text-black" value={message} onChange={(e) => {
+                        setMessage(e.target.value)
+                        socket.emit('sender-typing', { payload: e.target.value.length, senderEmail: JSON.parse(localStorage.getItem("userCheckMyIdea")).email })
+                    }} />
                     <span><button className="w-[100px] h-[35px] bg-green-500 hover:bg-green-700  cursor-pointer text-white font-bold rounded-r-md" onClick={() => {
                         sendMessageAndAddMessageToDB()
-                    
+
                     }}>send</button></span>
                 </div>
             </div>}

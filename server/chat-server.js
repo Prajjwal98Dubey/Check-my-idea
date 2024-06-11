@@ -21,6 +21,9 @@ io.on('connection',(socket)=>{
         uniqueIdList.sort();
         uniqueId = uniqueIdList[0] + "-" + uniqueIdList[1];
         socket.join(`room-${uniqueId}`)
+        socket.on('sender-typing',(data)=>{
+            io.to(`room-${uniqueId}`).emit('sender-typing',data)
+        })
         socket.on(`chat-${uniqueId}`,(payload)=>{
                 if(!flag.has(payload.time.toString() + `-${uniqueId}`))
                     {
